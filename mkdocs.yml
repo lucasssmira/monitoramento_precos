@@ -1,7 +1,9 @@
 site_name: Monitoramento de Preços
 site_description: Documentação de Requisitos e Arquitetura do Sistema de Monitoramento de Preços
 site_author: Equipe do Projeto
-site_url: ""
+site_url: https://lucasssmira.github.io/monitoramento_precos/
+repo_url: https://github.com/lucasssmira/monitoramento_precos
+repo_name: lucasssmira/monitoramento_precos
 
 theme:
   name: material
