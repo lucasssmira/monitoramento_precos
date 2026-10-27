@@ -1,0 +1,78 @@
+site_name: Monitoramento de Preços
+site_description: Documentação de Requisitos e Arquitetura do Sistema de Monitoramento de Preços
+site_author: Equipe do Projeto
+site_url: ""
+
+theme:
+  name: material
+  language: pt-BR
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - navigation.tracking
+    - search.suggest
+    - search.highlight
+    - search.share
+    - content.code.copy
+    - content.code.annotate
+    - content.tabs.link
+  palette:
+    # Modo Claro
+    - scheme: default
+      primary: indigo
+      accent: deep purple
+      toggle:
+        icon: material/brightness-7
+        name: Alternar para modo escuro
+    # Modo Escuro
+    - scheme: slate
+      primary: indigo
+      accent: deep purple
+      toggle:
+        icon: material/brightness-4
+        name: Alternar para modo claro
+  icon:
+    repo: fontawesome/brands/github
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.keys
+  - pymdownx.mark
+  - pymdownx.tilde
+  - attr_list
+  - md_in_html
+  - def_list
+  - tables
+  - toc:
+      permalink: true
+
+nav:
+  - Início: index.md
+  - Requisitos do Sistema:
+      - Visão Geral: requisitos/index.md
+      - Story Map: requisitos/story-map.md
+      - Requisitos Funcionais: requisitos/funcionais.md
+      - Requisitos Não-Funcionais: requisitos/nao-funcionais.md
+      - Regras de Negócio: requisitos/regras-de-negocio.md
+      - Histórias de Usuário: requisitos/historias-de-usuario.md
+      - Matriz de Rastreabilidade: requisitos/rastreabilidade.md
+  - Arquitetura:
+      - Visão Arquitetural: arquitetura/visao-geral.md
