@@ -1,26 +1,29 @@
-# Ambientes virtuais Python
+# Ambientes virtuais Python e MkDocs
 .venv/
 venv/
 env/
 ENV/
-
-# Cache Python
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
 .pytest_cache/
-
-# Build do MkDocs
 site/
 
-# IDEs e editores
-.vscode/
-.idea/
-*.sublime-project
-*.sublime-workspace
+# Laravel (delegado para src/.gitignore)
+/src/node_modules
+/src/vendor
+/src/.env
 
-# Sistema operacional
+
+# IDEs e Sistema Operacional
 .DS_Store
 Thumbs.db
 desktop.ini
+.fleet
+.idea
+.nova
+.vscode
+.zed
+*.sublime-project
+*.sublime-workspace
