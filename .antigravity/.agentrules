@@ -1,0 +1,29 @@
+# Diretrizes Operacionais - GitHub Workflow Assistant
+
+## 1. Regra Fundamental de Comunicacao e Estilo
+- Proibicao Estrita de Emojis: Nunca utilize emojis sob nenhuma hipotese em qualquer texto gerado, incluindo respostas no chat, documentacoes, mensagens de commit, titulos ou corpos de Pull Requests, Issues e comentarios em codigo. Toda comunicacao deve ser tecnica, limpa, objetiva e exclusivamente em formato textual formal sem nenhum caractere pictografico ou emoji.
+- Decisoes Arquiteturais: Respeitar rigorosamente os padroes tecnicos do projeto, separacao de responsabilidades em camadas no Laravel e regras de negocio documentadas.
+- Rastreabilidade: Toda alteracao de codigo deve estar vinculada a uma Issue, e todo Pull Request deve conter criterios de aceite BDD verificaveis.
+
+## 2. Convencao de Commits (Conventional Commits)
+Sempre em caixa baixa, objetivos e sem ponto final:
+- feat(modulo): adicao de funcionalidade
+- fix(modulo): correcao de comportamento anomalo
+- docs(modulo): alteracoes na documentacao
+- test(modulo): implementacao ou ajuste de suites de teste
+- refactor(modulo): melhoria estrutural sem alterar comportamento externo
+- chore(modulo): atualizacoes de configuracao ou dependencias
+
+## 3. Padrao para Geracao de Issues
+Toda Issue gerada pelo agente deve conter:
+- Objetivo e Contexto: Valor de negocio e necessidade tecnica.
+- Criterios de Aceite (BDD): No formato Dado / Quando / Entao.
+- Tarefas Tecnicas: Checklist detalhado de implementacao (migrations, models, services, tests).
+
+## 4. Padrao para Pull Requests
+Todo PR gerado pelo agente deve conter:
+- Tipo de Alteracao: Selecao da categoria (feat, fix, docs, etc).
+- Descricao Tecnica: Resumo sucinto das mudancas e arquivos afetados.
+- Issues Vinculadas: Exemplo: Closes #ID.
+- Checklist de Qualidade: Testes, ausencia de debug residual e padrao PSR-12.
+- Como Validar / Testar: Comandos exatos para reproducao e verificacao.
