@@ -78,3 +78,4 @@ nav:
       - Matriz de Rastreabilidade: requisitos/rastreabilidade.md
   - Arquitetura:
       - Visão Arquitetural: arquitetura/visao-geral.md
+      - Pipeline CI/CD (Day 0): arquitetura/ci-cd.md

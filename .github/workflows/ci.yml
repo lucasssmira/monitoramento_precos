@@ -1,0 +1,160 @@
+name: CI Pipeline (Day 0)
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  conventions-and-style:
+    name: Validar Convencoes e Diretrizes
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout do repositorio
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Validar ausencia de emojis nas mensagens de commit
+        run: |
+          COMMITS=$(git log origin/main..HEAD --pretty=format:"%s")
+          if [ -n "$COMMITS" ]; then
+            echo "Verificando mensagens de commit:"
+            echo "$COMMITS"
+            # Expressao regular para deteccao de faixas unicode de emojis comuns
+            if echo "$COMMITS" | grep -P '[\x{1F300}-\x{1F9FF}\x{2600}-\x{26FF}\x{2700}-\x{27BF}]'; then
+              echo "Erro: Foram detectados emojis nas mensagens de commit."
+              echo "Consulte .antigravity/.agentrules para a regra de proibicao estrita de emojis."
+              exit 1
+            fi
+            echo "Conformidade de estilo de commit aprovada: zero emojis detectados."
+          else
+            echo "Nenhum commit adicional a validar em relacao a branch base."
+          fi
+
+  docs-quality:
+    name: Validar Documentacao (MkDocs Strict)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout do repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Cache de dependencias pip
+        uses: actions/cache@v4
+        with:
+          key: mkdocs-material-${{ hashFiles('requirements.txt') }}
+          path: ~/.cache/pip
+          restore-keys: |
+            mkdocs-material-
+
+      - name: Instalar dependencias
+        run: pip install -r requirements.txt
+
+      - name: Validar build rigoroso do MkDocs
+        run: mkdocs build --strict
+
+  backend-laravel:
+    name: Backend CI (Laravel / PHP)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout do repositorio
+        uses: actions/checkout@v4
+
+      - name: Verificar presenca do projeto Laravel
+        id: check-laravel
+        run: |
+          if [ -f "composer.json" ]; then
+            echo "has_laravel=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_laravel=false" >> $GITHUB_OUTPUT
+            echo "composer.json nao localizado. Etapa de backend ignorada para o estado atual."
+          fi
+
+      - name: Configurar PHP e Extensoes
+        if: steps.check-laravel.outputs.has_laravel == 'true'
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.3"
+          extensions: mbstring, xml, ctype, iconv, intl, pdo, pdo_sqlite, bcmath, curl
+          coverage: none
+
+      - name: Validar integridade do composer.json
+        if: steps.check-laravel.outputs.has_laravel == 'true'
+        run: composer validate --strict
+
+      - name: Cache de dependencias Composer
+        if: steps.check-laravel.outputs.has_laravel == 'true'
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: composer-${{ runner.os }}-${{ hashFiles('composer.lock') }}
+          restore-keys: |
+            composer-${{ runner.os }}-
+
+      - name: Instalar dependencias Composer
+        if: steps.check-laravel.outputs.has_laravel == 'true'
+        run: composer install --prefer-dist --no-progress --no-interaction
+
+      - name: Executar analise de seguranca de dependencias
+        if: steps.check-laravel.outputs.has_laravel == 'true'
+        run: composer audit
+
+      - name: Executar verificacao de estilo (Pint)
+        if: steps.check-laravel.outputs.has_laravel == 'true'
+        run: |
+          if [ -f "vendor/bin/pint" ]; then
+            ./vendor/bin/pint --test
+          fi
+
+      - name: Executar suite de testes automatizados
+        if: steps.check-laravel.outputs.has_laravel == 'true'
+        run: |
+          if [ -f "artisan" ]; then
+            cp .env.example .env.testing || true
+            php artisan key:generate --env=testing || true
+            php artisan test --parallel
+          fi
+
+  frontend-vue:
+    name: Frontend CI (Vue 3 / Inertia)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout do repositorio
+        uses: actions/checkout@v4
+
+      - name: Verificar presenca de dependencias frontend
+        id: check-frontend
+        run: |
+          if [ -f "package.json" ]; then
+            echo "has_frontend=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_frontend=false" >> $GITHUB_OUTPUT
+            echo "package.json nao localizado. Etapa de frontend ignorada para o estado atual."
+          fi
+
+      - name: Configurar Node.js
+        if: steps.check-frontend.outputs.has_frontend == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Instalar dependencias Node
+        if: steps.check-frontend.outputs.has_frontend == 'true'
+        run: npm ci
+
+      - name: Validar build de assets (Inertia + Vue 3)
+        if: steps.check-frontend.outputs.has_frontend == 'true'
+        run: npm run build
