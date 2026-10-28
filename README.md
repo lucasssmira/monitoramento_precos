@@ -1,12 +1,12 @@
-# Sistema de Monitoramento de Preços
+# Sistema de Monitoramento de Precos
 
-Repositório do projeto **Monitoramento de Preços**, contendo a documentação técnica, especificação de requisitos e código-fonte.
+Repositorio do projeto **Monitoramento de Precos**, contendo a documentacao tecnica, especificacao de requisitos e codigo-fonte da aplicacao.
 
-## 📖 Documentação do Projeto (MkDocs Material)
+## Documentacao do Projeto (MkDocs Material)
 
-A documentação viva do sistema está estruturada na pasta [`docs/`](docs/) e utiliza **MkDocs** com o tema **Material**.
+A documentacao viva do sistema esta estruturada na pasta [`docs/`](docs/) e utiliza **MkDocs** com o tema **Material**.
 
-### Como Rodar a Documentação Localmente
+### Como Rodar a Documentacao Localmente
 
 1. **Ativar o Ambiente Virtual:**
    ```powershell
@@ -27,14 +27,16 @@ A documentação viva do sistema está estruturada na pasta [`docs/`](docs/) e u
 
 ---
 
-## 📂 Estrutura de Artefatos Criados
+## Estrutura de Artefatos Criados
 
-- [`mkdocs.yml`](mkdocs.yml): Configuração visual, paleta (Dark/Light), extensões Mermaid, Abas e Navegação.
-- [`docs/index.md`](docs/index.md): Visão geral do projeto e fluxo conceitual.
-- [`docs/requisitos/index.md`](docs/requisitos/index.md): Convenções de nomenclatura, método MoSCoW e ciclo de vida.
-- [`docs/requisitos/funcionais.md`](docs/requisitos/funcionais.md): Especificação dos Requisitos Funcionais (RF-001 a RF-007) com template.
-- [`docs/requisitos/nao-funcionais.md`](docs/requisitos/nao-funcionais.md): Requisitos Não-Funcionais categorizados por ISO 25010 com métricas quantificáveis.
-- [`docs/requisitos/regras-de-negocio.md`](docs/requisitos/regras-de-negocio.md): Políticas e regras de domínio (RN-001 a RN-007).
-- [`docs/requisitos/historias-de-usuario.md`](docs/requisitos/historias-de-usuario.md): Histórias de Usuário (US-001 a US-003) com critérios de aceitação em BDD (Gherkin).
-- [`docs/requisitos/rastreabilidade.md`](docs/requisitos/rastreabilidade.md): Matriz cruzada integrando US ↔ RF ↔ RNF ↔ RN.
-- [`docs/arquitetura/visao-geral.md`](docs/arquitetura/visao-geral.md): Diagrama conceitual de arquitetura em Mermaid.
+- [`mkdocs.yml`](mkdocs.yml): Configuracao visual, paleta (Dark/Light), extensoes Mermaid, Abas e Navegacao.
+- [`docs/index.md`](docs/index.md): Visao geral do projeto e fluxo conceitual.
+- [`docs/requisitos/index.md`](docs/requisitos/index.md): Convencoes de nomenclatura, metodo MoSCoW e ciclo de vida.
+- [`docs/requisitos/story-map.md`](docs/requisitos/story-map.md): Mapeamento de historias e escopo consolidado da Release 1 (MVP Completo).
+- [`docs/requisitos/funcionais.md`](docs/requisitos/funcionais.md): Especificacao dos Requisitos Funcionais (`RF-001` a `RF-017`).
+- [`docs/requisitos/nao-funcionais.md`](docs/requisitos/nao-funcionais.md): Requisitos Nao-Funcionais categorizados por ISO 25010 com metricas quantificaveis.
+- [`docs/requisitos/regras-de-negocio.md`](docs/requisitos/regras-de-negocio.md): Politicas e regras de dominio (`RN-001` a `RN-010`).
+- [`docs/requisitos/historias-de-usuario.md`](docs/requisitos/historias-de-usuario.md): Historias de Usuario (`US-001` a `US-005`) com criterios de aceitacao em BDD (Gherkin).
+- [`docs/requisitos/rastreabilidade.md`](docs/requisitos/rastreabilidade.md): Matriz cruzada integrando US, RF, RNF e RN.
+- [`docs/arquitetura/visao-geral.md`](docs/arquitetura/visao-geral.md): Diagrama conceitual de arquitetura em Mermaid e stack tecnologica.
+- [`docs/arquitetura/ci-cd.md`](docs/arquitetura/ci-cd.md): Especificacao da esteira de Integracao e Entrega Continua (CI/CD Day 0).

@@ -1,82 +1,81 @@
-# Requisitos Não-Funcionais (RNF)
+# Requisitos Nao-Funcionais (RNF)
 
-Os Requisitos Não-Funcionais definem os atributos de qualidade, restrições tecnológicas e requisitos arquiteturais da solução, estruturados com base na norma **ISO/IEC 25010** e alinhados à stack **Laravel 13**, **Inertia.js**, **Vue 3** e **Laravel Herd**.
+Os Requisitos Nao-Funcionais definem os atributos de qualidade, restricoes tecnologicas e requisitos arquiteturais da solucao, estruturados com base na norma **ISO/IEC 25010** e alinhados a stack **Laravel 13**, **Inertia.js v3**, **Vue 3**, **Docker Compose** e **Laravel Herd**.
 
 ---
 
-## 📊 Matriz Resumo dos Requisitos Não-Funcionais
+## Matriz Resumo dos Requisitos Nao-Funcionais
 
-| ID | Categoria (ISO 25010) | Descrição do Requisito | Métrica / Alvo | Prioridade |
+| ID | Categoria (ISO 25010) | Descricao do Requisito | Metrica / Alvo | Prioridade |
 | :--- | :--- | :--- | :--- | :---: |
-| [`RNF-001`](#rnf-001-desempenho-e-transicoes-spa) | Eficiência de Desempenho | Tempo de resposta e transição de páginas SPA | Transição $\le 300\text{ ms}$ (p95) | Must |
-| [`RNF-002`](#rnf-002-ambiente-de-desenvolvimento-herd) | Compatibilidade / Portabilidade | Ambiente local padronizado com Laravel Herd | Compatível com PHP 8.3+, Nginx e Node.js | Must |
-| [`RNF-003`](#rnf-003-compatibilidade-e-framework) | Manutenibilidade | Adoção do framework Laravel na versão mais recente | Laravel 13.x | Must |
-| [`RNF-004`](#rnf-004-processamento-assincrono-e-filas) | Eficiência de Desempenho | Execução desacoplada de scraping em filas | Bloqueio de UI = 0 ms (100% assíncrono) | Must |
-| [`RNF-005`](#rnf-005-resiliencia-de-scraping) | Confiabilidade | Resiliência contra bloqueios e instabilidades de lojas | Taxa de sucesso $\ge 95\%$ | Must |
-| [`RNF-006`](#rnf-006-seguranca-e-protecao-de-dados) | Segurança | Proteção de credenciais, CSRF e senhas | Hash Argon2/Bcrypt + Tokens em variáveis de ambiente | Must |
-| [`RNF-007`](#rnf-007-interface-responsiva) | Usabilidade | Design responsivo adaptável a múltiplos dispositivos | Suporte fluido de 360px a 1920px (Mobile First) | Should |
+| [`RNF-001`](#rnf-001-desempenho-e-transicoes-spa) | Eficiencia de Desempenho | Tempo de resposta e transicao de paginas SPA | Transicao $\le 300\text{ ms}$ (p95) | Must |
+| [`RNF-002`](#rnf-002-ambiente-hibrido-docker-compose-e-laravel-herd) | Compatibilidade / Portabilidade | Ambiente padronizado com Docker Compose e compatibilidade com Laravel Herd | PHP 8.3+, PostgreSQL 16, Redis 7 e Node.js 20 | Must |
+| [`RNF-003`](#rnf-003-compatibilidade-framework-e-localizacao-pt_br) | Manutenibilidade / Usabilidade | Adocao do Laravel 13.x com localizacao integral em `pt_BR` | Laravel 13.x + 100% da interface e validacoes em `pt_BR` | Must |
+| [`RNF-004`](#rnf-004-processamento-assincrono-e-filas) | Eficiencia de Desempenho | Execucao desacoplada de scraping e e-mails em filas | Bloqueio de UI = 0 ms (100% assincrono) | Must |
+| [`RNF-005`](#rnf-005-resiliencia-de-scraping-http) | Confiabilidade | Resiliencia contra bloqueios e instabilidades de lojas via HTTP leve | Taxa de sucesso $\ge 95\%$ sem sobrecarga de Headless Browser | Must |
+| [`RNF-006`](#rnf-006-seguranca-e-protecao-de-dados) | Seguranca | Protecao de credenciais, verificacao de e-mail, CSRF e prevencao de SSRF | Hash Bcrypt/Argon2 + Validacao Anti-SSRF | Must |
+| [`RNF-007`](#rnf-007-interface-responsiva) | Usabilidade | Design responsivo adaptavel a multiplos dispositivos | Suporte fluido de 360px a 1920px (Mobile First) | Should |
 | [`RNF-008`](#rnf-008-observabilidade-e-logs) | Manutenibilidade | Rastreamento estruturado de coletas e falhas | Logs estruturados via Laravel Monolog em JSON | Must |
 
 ---
 
-## 🔍 Detalhamento por Categoria
+## Detalhamento por Categoria
 
-### ⚡ 1. Desempenho e Eficiência
+### 1. Desempenho e Eficiencia
 
-#### RNF-001: Desempenho e Transições SPA
-- **Declaração:** A interface construída com **Inertia.js e Vue 3** deve realizar transições de tela e carregamento de *props* em tempo inferior a 300 ms no percentil 95 sob rede estável, sem recarregamento completo da página (*full page reload*).
-- **Critério de Aceitação:** Auditoria no navegador (Chrome DevTools Performance) comprovando transição de rota fluida sem efeito de tela branca.
+#### RNF-001: Desempenho e Transicoes SPA
+- **Declaracao:** A interface construida com **Inertia.js v3 e Vue 3** deve realizar transicoes de tela e carregamento de *props* em tempo inferior a 300 ms no percentil 95 sob rede estavel, sem recarregamento completo da pagina (*full page reload*).
+- **Criterio de Aceitacao:** Transicao de rota fluida sem efeito de tela branca.
 
-#### RNF-004: Processamento Assíncrono e Filas
-- **Declaração:** Nenhuma operação de rede externa voltada à coleta de preços (*scraping*) ou disparo de e-mails/Telegram pode ser executada sincronamente dentro do ciclo de vida da requisição HTTP do usuário.
-- **Critério de Aceitação:** As ações de cadastro de produtos ou disparo de testes de notificação devem responder à UI em menos de 200 ms, despachando o trabalho pesado para os *Queue Workers* do Laravel.
-
----
-
-### 💻 2. Compatibilidade e Ambiente
-
-#### RNF-002: Ambiente de Desenvolvimento (Herd)
-- **Declaração:** O ambiente de desenvolvimento deve ser gerenciado primariamente através do **Laravel Herd**, garantindo suporte nativo a PHP 8.3+, Nginx, Node.js e gerenciamento de domínios `.test` sem necessidade de virtualização pesada.
-- **Critério de Aceitação:** O projeto deve ser clonado e executado através de comandos `herd` / `composer` / `npm` sem erros de compatibilidade de extensões (ex: cURL, OpenSSL, PDO).
-
-#### RNF-003: Compatibilidade e Framework
-- **Declaração:** A aplicação deve ser construída na versão estável mais recente do framework: **Laravel 13.x**, adotando as convenções e práticas recomendadas da arquitetura do framework.
+#### RNF-004: Processamento Assincrono e Filas
+- **Declaracao:** Nenhuma operacao de rede externa voltada a coleta de precos (*scraping*) ou disparo de e-mails pode ser executada sincronamente dentro do ciclo de vida da requisicao HTTP do usuario.
+- **Criterio de Aceitacao:** As acoes de cadastro de produtos (`RF-005`) ou atualizacao manual (`RF-010`) devem responder a UI em menos de 200 ms, despachando o trabalho de coleta para os *Queue Workers* do Laravel.
 
 ---
 
-### 🛡️ 3. Confiabilidade e Robustez
+### 2. Compatibilidade, Ambiente e Localizacao
 
-#### RNF-005: Resiliência de Scraping
-- **Declaração:** Os adaptadores de extração de dados devem implementar rotação de *User-Agents*, intervalos dinâmicos (*jitter*) e retentativas exponenciais, garantindo que o coletor não seja interrompido por falhas transitórias (erros HTTP 429, 502, 503 ou timeouts).
-- **Critério de Aceitação:** Falhas em um e-commerce específico não podem afetar a fila de processamento dos demais e-commerces.
+#### RNF-002: Ambiente Hibrido (Docker Compose e Laravel Herd)
+- **Declaracao:** O projeto deve prover orquestracao completa via **Docker Compose** (`app` PHP 8.3, `postgres` 16, `redis` 7 e `mailpit` para testes locais de e-mail), mantendo compatibilidade para execucao nativa no host atraves do **Laravel Herd**.
+- **Criterio de Aceitacao:** A aplicacao e a suite de testes devem executar sem erros de extensoes tanto dentro dos containers Docker quanto via Laravel Herd.
 
----
-
-### 🔒 4. Segurança
-
-#### RNF-006: Segurança e Proteção de Dados
-- **Declaração:** A aplicação deve implementar as seguintes medidas de segurança:
-    - Armazenamento de senhas com algoritmo seguro de derivação de chaves (**Bcrypt** ou **Argon2id**).
-    - Proteção automática contra ataques de **CSRF** e injeção de SQL via Eloquent ORM.
-    - Sanitização rigorosa das URLs de entrada informadas pelo usuário para prevenir ataques de *Server-Side Request Forgery* (SSRF).
-    - Armazenamento de credenciais externas (SMTP, Telegram Token) exclusivamente no arquivo `.env`.
+#### RNF-003: Compatibilidade, Framework e Localizacao (`pt_BR`)
+- **Declaracao:** A aplicacao deve ser construida sobre o **Laravel 13.x**, adotando as convencoes arquiteturais do framework e configurada integralmente no idioma **Portugues do Brasil (`APP_LOCALE=pt_BR`)**, abrangendo todas as telas Vue, e-mails transacionais e mensagens de validacao.
 
 ---
 
-### 🎨 5. Usabilidade
+### 3. Confiabilidade e Robustez
+
+#### RNF-005: Resiliencia de Scraping HTTP
+- **Declaracao:** Os adaptadores de extracao de dados devem operar de forma leve com `GuzzleHTTP + Symfony DomCrawler`, implementando rotacao de *User-Agents*, intervalos minimos por dominio (`RN-005`) e retentativas exponenciais (`RN-006`), garantindo que o coletor nao seja interrompido por falhas transitorias (erros HTTP 429, 502, 503 ou timeouts).
+- **Criterio de Aceitacao:** Falhas em um e-commerce especifico nao podem afetar a fila de processamento dos demais e-commerces.
+
+---
+
+### 4. Seguranca
+
+#### RNF-006: Seguranca e Protecao de Dados
+- **Declaracao:** A aplicacao deve implementar as seguintes medidas de seguranca:
+    - Armazenamento de senhas com algoritmo seguro de derivacao de chaves (**Bcrypt** ou **Argon2id**) e verificacao obrigatoria de e-mail no registro (`MustVerifyEmail`).
+    - Autenticacao enxuta baseada em sessao segura com protecao contra **CSRF** e rate limiting de login (`RN-002`), sem exposicao de dados de terceiros.
+    - Sanitizacao rigorosa das URLs de entrada informadas pelo usuario para prevenir ataques de *Server-Side Request Forgery* (**SSRF**).
+    - Armazenamento de credenciais externas (banco de dados, Redis, SMTP) exclusivamente no arquivo `.env`.
+
+---
+
+### 5. Usabilidade
 
 #### RNF-007: Interface Responsiva
-- **Declaração:** A interface em Vue 3 estilizada com **Tailwind CSS** deve ser responsiva (*Mobile-First*), com navegação confortável em smartphones, tablets e telas widescreen.
-- **Critério de Aceitação:** Pontuação mínima de 90 no Google Lighthouse (categoria *Acessibilidade* e *Melhores Práticas*).
+- **Declaracao:** A interface em Vue 3 estilizada com **Tailwind CSS v4** deve ser responsiva (*Mobile-First*), com navegacao confortavel para listagem de produtos, filtros por categoria e visualizacao de graficos em smartphones, tablets e desktops.
 
 ---
 
-### 🛠️ 6. Manutenibilidade e Observabilidade
+### 6. Manutenibilidade e Observabilidade
 
 #### RNF-008: Observabilidade e Logs
-- **Declaração:** Todas as rotinas de coleta periódica devem gerar registros estruturados nos canais de log do Laravel (*Monolog*), contendo:
+- **Declaracao:** Todas as rotinas de coleta periodica e sob demanda devem gerar registros estruturados nos canais de log do Laravel (*Monolog*) em formato JSON, contendo:
     - ID do produto
-    - URL do e-commerce
-    - Tempo total da requisição (ms)
+    - URL e dominio do e-commerce
+    - Tempo total da requisicao (ms)
     - Status HTTP retornado
-    - Status da extração (Sucesso, Preço Inalterado, Falha Seletor ou Timeout)
+    - Status da extracao (Sucesso, Preco Inalterado, Falha Seletor ou Timeout)

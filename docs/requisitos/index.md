@@ -1,55 +1,55 @@
-# Engenharia de Requisitos - Visão Geral
+# Engenharia de Requisitos - Visao Geral
 
-Esta seção consolida a especificação dos requisitos do projeto **Monitoramento de Preços**. A metodologia adotada combina rigor de rastreabilidade com agilidade na evolução dos artefatos.
+Esta secao consolida a especificacao dos requisitos do projeto **Monitoramento de Precos**. A metodologia adotada combina rigor de rastreabilidade com agilidade na evolucao dos artefatos.
 
 ---
 
-## 🏷️ Convenções de Nomenclatura
+## Convencoes de Nomenclatura
 
-Para garantir consistência e fácil rastreabilidade entre código, testes e documentação, utilizamos os seguintes prefixos padronizados:
+Para garantir consistencia e facil rastreabilidade entre codigo, testes e documentacao, utilizamos os seguintes prefixos padronizados:
 
-| Prefixo | Tipo de Artefato | Descrição | Exemplo |
+| Prefixo | Tipo de Artefato | Descricao | Exemplo |
 | :--- | :--- | :--- | :--- |
-| **`RF-xxx`** | Requisito Funcional | Ações, comportamentos e funções executadas pelo sistema | `RF-001` |
-| **`RNF-xxx`** | Requisito Não-Funcional | Restrições técnicas, qualidade e atributos de desempenho | `RNF-001` |
-| **`RN-xxx`** | Regra de Negócio | Políticas e restrições de domínio aplicadas aos processos | `RN-001` |
-| **`US-xxx`** | História de Usuário | Necessidades do usuário final sob perspectiva ágil | `US-001` |
+| **`RF-xxx`** | Requisito Funcional | Acoes, comportamentos e funcoes executadas pelo sistema | `RF-001` |
+| **`RNF-xxx`** | Requisito Nao-Funcional | Restricoes tecnicas, qualidade e atributos de desempenho | `RNF-001` |
+| **`RN-xxx`** | Regra de Negocio | Politicas e restricoes de dominio aplicadas aos processos | `RN-001` |
+| **`US-xxx`** | Historia de Usuario | Necessidades do usuario final sob perspectiva agil | `US-001` |
 
 ---
 
-## ⚖️ Classificação de Prioridade (Método MoSCoW)
+## Classificacao de Prioridade (Metodo MoSCoW)
 
-Todos os requisitos funcionais e não-funcionais são categorizados utilizando o método **MoSCoW**:
+Todos os requisitos funcionais e nao-funcionais sao categorizados utilizando o metodo **MoSCoW**:
 
-- :red_circle: **Must have (Obrigatório):** Crítico para a viabilidade do MVP (Produto Mínimo Viável). O sistema não pode ser lançado sem este item.
-- :orange_circle: **Should have (Importante):** Alta relevância e valor agregado, mas não impede a operação inicial caso postergado para a próxima iteração.
-- :yellow_circle: **Could have (Desejável):** Melhoria conveniente ou diferencial competitivo que será implementado se houver tempo e recursos.
-- :white_circle: **Won't have (Não prioritário no momento):** Identificado e acordado como fora do escopo da versão atual, mas registrado para versões futuras.
+- **Must have (Obrigatorio):** Critico para a viabilidade da Release 1 (MVP Completo). O sistema nao pode ser lancado sem este item.
+- **Should have (Importante):** Alta relevancia e valor agregado que complementa a experiencia principal da Release 1.
+- **Could have (Desejavel):** Melhoria conveniente ou diferencial competitivo que sera implementado se houver tempo e recursos.
+- **Won't have (Fora de escopo):** Identificado e acordado como fora do escopo do projeto (ex: autenticacao em dois fatores, Passkeys, notificacoes via Telegram, exportacao CSV e comparador multicontas).
 
 ---
 
-## 🔄 Ciclo de Vida dos Requisitos
+## Ciclo de Vida dos Requisitos
 
 ```mermaid
 stateDiagram-v2
-    [*] --> Proposto: Identificação da Necessidade
-    Proposto --> Em_Analise: Refinamento Técnico e Negócio
-    Em_Analise --> Aprovado: Validação com Stakeholders
-    Aprovado --> Em_Desenvolvimento: Sprint / Tarefa Criada
-    Em_Desenvolvimento --> Validado: Testes de Aceitação
+    [*] --> Proposto: Identificacao da Necessidade
+    Proposto --> Em_Analise: Refinamento Tecnico e Negocio
+    Em_Analise --> Aprovado: Validacao com Stakeholders
+    Aprovado --> Em_Desenvolvimento: Issue e Branch Criadas
+    Em_Desenvolvimento --> Validado: Testes Automatizados e PR Aprovado
     Validado --> [*]
     
-    Em_Analise --> Rejeitado: Inviabilidade Técnica/Negócio
+    Em_Analise --> Rejeitado: Fora de Escopo / Simplificacao
     Rejeitado --> [*]
 ```
 
 ---
 
-## 📑 Navegação Rápida
+## Navegacao Rapida
 
-- 👉 [Consultar Story Map (Mapeamento de Histórias)](story-map.md)
-- 👉 [Consultar Requisitos Funcionais (RF)](funcionais.md)
-- 👉 [Consultar Requisitos Não-Funcionais (RNF)](nao-funcionais.md)
-- 👉 [Consultar Regras de Negócio (RN)](regras-de-negocio.md)
-- 👉 [Consultar Histórias de Usuário (US)](historias-de-usuario.md)
-- 👉 [Consultar Matriz de Rastreabilidade](rastreabilidade.md)
+- [Consultar Story Map (Mapeamento de Historias)](story-map.md)
+- [Consultar Requisitos Funcionais (RF)](funcionais.md)
+- [Consultar Requisitos Nao-Funcionais (RNF)](nao-funcionais.md)
+- [Consultar Regras de Negocio (RN)](regras-de-negocio.md)
+- [Consultar Historias de Usuario (US)](historias-de-usuario.md)
+- [Consultar Matriz de Rastreabilidade](rastreabilidade.md)
