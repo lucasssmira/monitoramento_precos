@@ -9,35 +9,35 @@ Esta página apresenta a arquitetura de alto nível do sistema de **Monitorament
 ```mermaid
 graph TD
     subgraph Client["Camada do Cliente (SPA)"]
-        Browser[Navegador Web / Mobile]
-        VueApp[SPA Vue 3 - Composition API & Tailwind]
+        Browser["Navegador Web / Mobile"]
+        VueApp["SPA Vue 3 - Composition API & Tailwind"]
     end
 
     subgraph LaravelApp["Aplicação Laravel (Monolito Moderno)"]
-        Routes[Web Routes / Middlewares]
-        InertiaAdapter[Inertia.js Middleware & Adapter]
-        Controllers[Controllers & Actions]
-        AuthModule[Laravel Breeze - Inertia/Vue]
-        Eloquent[Eloquent ORM / Models]
-        Scheduler[Laravel Task Scheduler (Cron)]
-        QueueWorker[Laravel Queue Workers]
-        NotificationService[Laravel Notification System]
+        Routes["Web Routes / Middlewares"]
+        InertiaAdapter["Inertia.js Middleware & Adapter"]
+        Controllers["Controllers & Actions"]
+        AuthModule["Laravel Breeze - Inertia/Vue"]
+        Eloquent["Eloquent ORM / Models"]
+        Scheduler["Laravel Task Scheduler (Cron)"]
+        QueueWorker["Laravel Queue Workers"]
+        NotificationService["Laravel Notification System"]
     end
 
     subgraph Scrapers["Mecanismo de Extração de Dados"]
-        HttpScraper[GuzzleHTTP + Symfony DomCrawler]
-        JsScraper[Spatie Browsershot / Headless Chrome]
+        HttpScraper["GuzzleHTTP + Symfony DomCrawler"]
+        JsScraper["Spatie Browsershot / Headless Chrome"]
     end
 
     subgraph Persistence["Camada de Dados & Mensageria"]
-        DB[(Banco de Dados Relacional - PostgreSQL/MySQL)]
-        CacheQueue[(Redis - Cache e Filas)]
+        DB[("Banco de Dados Relacional - PostgreSQL/MySQL")]
+        CacheQueue[("Redis - Cache e Filas")]
     end
 
     subgraph External["Serviços & Lojas Externas"]
-        Ecommerces[Lojas & E-commerces Alvo]
-        MailService[Serviço SMTP / Mailgun / SES]
-        TelegramBot[Bot Telegram API]
+        Ecommerces["Lojas & E-commerces Alvo"]
+        MailService["Serviço SMTP / Mailgun / SES"]
+        TelegramBot["Bot Telegram API"]
     end
 
     Browser --> VueApp
