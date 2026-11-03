@@ -1,4 +1,4 @@
-name: CI Pipeline (Day 0)
+name: CI Pipeline
 
 on:
   push:
@@ -22,19 +22,33 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Validar ausencia de emojis nas mensagens de commit
+      - name: Validar ausencia de emojis e formato Conventional Commits
         run: |
-          COMMITS=$(git log origin/main..HEAD --pretty=format:"%s")
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            RANGE="origin/${{ github.base_ref }}..HEAD"
+          else
+            RANGE="HEAD~1..HEAD"
+          fi
+
+          COMMITS=$(git log $RANGE --no-merges --pretty=format:"%s" 2>/dev/null || true)
           if [ -n "$COMMITS" ]; then
             echo "Verificando mensagens de commit:"
             echo "$COMMITS"
-            # Expressao regular para deteccao de faixas unicode de emojis comuns
+
             if echo "$COMMITS" | grep -P '[\x{1F300}-\x{1F9FF}\x{2600}-\x{26FF}\x{2700}-\x{27BF}]'; then
               echo "Erro: Foram detectados emojis nas mensagens de commit."
-              echo "Consulte .antigravity/.agentrules para a regra de proibicao estrita de emojis."
+              echo "Consulte .agents/rules/agentrules.md para a regra de proibicao estrita de emojis."
               exit 1
             fi
-            echo "Conformidade de estilo de commit aprovada: zero emojis detectados."
+
+            while IFS= read -r line; do
+              if [ -n "$line" ] && ! echo "$line" | grep -Eq '^(feat|fix|docs|test|refactor|chore|ci)(\([a-z0-9_-]+\))?: [^A-Z].*[^.]$'; then
+                echo "Erro: Mensagem de commit fora do padrao Conventional Commits (caixa baixa e sem ponto final): $line"
+                exit 1
+              fi
+            done <<< "$COMMITS"
+
+            echo "Conformidade de commits aprovada: Conventional Commits e zero emojis."
           else
             echo "Nenhum commit adicional a validar em relacao a branch base."
           fi
@@ -66,95 +80,114 @@ jobs:
         run: mkdocs build --strict
 
   backend-laravel:
-    name: Backend CI (Laravel / PHP)
+    name: Backend CI (Laravel 13 / PHP 8.4)
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: src
     steps:
       - name: Checkout do repositorio
         uses: actions/checkout@v4
 
-      - name: Verificar presenca do projeto Laravel
-        id: check-laravel
-        run: |
-          if [ -f "composer.json" ]; then
-            echo "has_laravel=true" >> $GITHUB_OUTPUT
-          else
-            echo "has_laravel=false" >> $GITHUB_OUTPUT
-            echo "composer.json nao localizado. Etapa de backend ignorada para o estado atual."
-          fi
-
       - name: Configurar PHP e Extensoes
-        if: steps.check-laravel.outputs.has_laravel == 'true'
         uses: shivammathur/setup-php@v2
         with:
-          php-version: "8.3"
-          extensions: mbstring, xml, ctype, iconv, intl, pdo, pdo_sqlite, bcmath, curl
+          php-version: "8.4"
+          extensions: mbstring, xml, ctype, iconv, intl, pdo, pdo_sqlite, pdo_pgsql, pgsql, redis, bcmath, curl, zip, dom
           coverage: none
 
+      - name: Configurar Node.js para compilacao do manifesto Vite
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+          cache-dependency-path: src/package-lock.json
+
       - name: Validar integridade do composer.json
-        if: steps.check-laravel.outputs.has_laravel == 'true'
         run: composer validate --strict
 
       - name: Cache de dependencias Composer
-        if: steps.check-laravel.outputs.has_laravel == 'true'
         uses: actions/cache@v4
         with:
-          path: vendor
-          key: composer-${{ runner.os }}-${{ hashFiles('composer.lock') }}
+          path: src/vendor
+          key: composer-${{ runner.os }}-${{ hashFiles('src/composer.lock') }}
           restore-keys: |
             composer-${{ runner.os }}-
 
       - name: Instalar dependencias Composer
-        if: steps.check-laravel.outputs.has_laravel == 'true'
         run: composer install --prefer-dist --no-progress --no-interaction
 
-      - name: Executar analise de seguranca de dependencias
-        if: steps.check-laravel.outputs.has_laravel == 'true'
+      - name: Preparar ambiente da aplicacao
+        run: |
+          cp .env.example .env
+          php artisan key:generate --ansi
+
+      - name: Compilar assets Vite para testes de integracao Inertia
+        run: |
+          npm ci
+          npm run build
+
+      - name: Executar auditoria de seguranca de pacotes Composer
         run: composer audit
 
-      - name: Executar verificacao de estilo (Pint)
-        if: steps.check-laravel.outputs.has_laravel == 'true'
-        run: |
-          if [ -f "vendor/bin/pint" ]; then
-            ./vendor/bin/pint --test
-          fi
+      - name: Executar verificacao de estilo (Laravel Pint)
+        run: ./vendor/bin/pint --test
 
-      - name: Executar suite de testes automatizados
-        if: steps.check-laravel.outputs.has_laravel == 'true'
-        run: |
-          if [ -f "artisan" ]; then
-            cp .env.example .env.testing || true
-            php artisan key:generate --env=testing || true
-            php artisan test --parallel
-          fi
+      - name: Executar analise estatica de tipos (Larastan / PHPStan)
+        run: ./vendor/bin/phpstan analyse --memory-limit=2G
+
+      - name: Executar suite de testes automatizados (Pest)
+        run: php artisan test
 
   frontend-vue:
-    name: Frontend CI (Vue 3 / Inertia)
+    name: Frontend CI (Vue 3 / Inertia v3 / TypeScript)
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: src
     steps:
       - name: Checkout do repositorio
         uses: actions/checkout@v4
 
-      - name: Verificar presenca de dependencias frontend
-        id: check-frontend
+      - name: Configurar PHP (necessario para Laravel Wayfinder)
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.4"
+          extensions: mbstring, xml, ctype, iconv, intl, pdo, pdo_sqlite, bcmath
+          coverage: none
+
+      - name: Cache de dependencias Composer
+        uses: actions/cache@v4
+        with:
+          path: src/vendor
+          key: composer-${{ runner.os }}-${{ hashFiles('src/composer.lock') }}
+          restore-keys: |
+            composer-${{ runner.os }}-
+
+      - name: Instalar dependencias Composer e preparar ambiente
         run: |
-          if [ -f "package.json" ]; then
-            echo "has_frontend=true" >> $GITHUB_OUTPUT
-          else
-            echo "has_frontend=false" >> $GITHUB_OUTPUT
-            echo "package.json nao localizado. Etapa de frontend ignorada para o estado atual."
-          fi
+          composer install --prefer-dist --no-progress --no-interaction
+          cp .env.example .env
+          php artisan key:generate --ansi
 
       - name: Configurar Node.js
-        if: steps.check-frontend.outputs.has_frontend == 'true'
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "22"
           cache: "npm"
+          cache-dependency-path: src/package-lock.json
 
       - name: Instalar dependencias Node
-        if: steps.check-frontend.outputs.has_frontend == 'true'
         run: npm ci
 
-      - name: Validar build de assets (Inertia + Vue 3)
-        if: steps.check-frontend.outputs.has_frontend == 'true'
+      - name: Gerar rotas e tipos do Laravel Wayfinder
+        run: php artisan wayfinder:generate --with-form
+
+      - name: Validar formatacao e linting Frontend (Vite Plus Check)
+        run: npm run check
+
+      - name: Validar tipagem estatica TypeScript e Vue (vue-tsc)
+        run: npm run types:check
+
+      - name: Validar build de producao dos assets (Inertia + Vue 3 + Tailwind v4)
         run: npm run build
