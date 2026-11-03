@@ -13,7 +13,7 @@ graph TD
     subgraph CI["Pipeline de Integracao Continua (ci.yml)"]
         Job1["1. Validacao de Convencoes"]
         Job2["2. Qualidade da Documentacao"]
-        Job3["3. Backend CI - Laravel 13 / PHP 8.3 (src/)"]
+        Job3["3. Backend CI - Laravel 13 / PHP 8.4 (src/)"]
         Job4["4. Frontend CI - Vue 3 / TypeScript (src/)"]
 
         Job1 -->|Verifica zero emojis e Conventional Commits| Check1["Conformidade de Estilo"]

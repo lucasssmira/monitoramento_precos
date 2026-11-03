@@ -80,7 +80,7 @@ jobs:
         run: mkdocs build --strict
 
   backend-laravel:
-    name: Backend CI (Laravel 13 / PHP 8.3)
+    name: Backend CI (Laravel 13 / PHP 8.4)
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -92,7 +92,7 @@ jobs:
       - name: Configurar PHP e Extensoes
         uses: shivammathur/setup-php@v2
         with:
-          php-version: "8.3"
+          php-version: "8.4"
           extensions: mbstring, xml, ctype, iconv, intl, pdo, pdo_sqlite, pdo_pgsql, pgsql, redis, bcmath, curl, zip, dom
           coverage: none
 
@@ -152,7 +152,7 @@ jobs:
       - name: Configurar PHP (necessario para Laravel Wayfinder)
         uses: shivammathur/setup-php@v2
         with:
-          php-version: "8.3"
+          php-version: "8.4"
           extensions: mbstring, xml, ctype, iconv, intl, pdo, pdo_sqlite, bcmath
           coverage: none
 

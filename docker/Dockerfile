@@ -1,4 +1,4 @@
-FROM php:8.3-cli
+FROM php:8.4-cli
 
 # Instalar dependencias do sistema e bibliotecas necessarias para PostgreSQL e Redis
 RUN apt-get update && apt-get install -y \
