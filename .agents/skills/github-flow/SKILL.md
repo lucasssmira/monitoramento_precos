@@ -35,15 +35,15 @@ Antes de iniciar qualquer nova Issue:
    git push origin --delete <branch-anterior>
    ```
 
-### Etapa 2: Criacao da Branch da Issue
-Criar uma branch descritiva a partir da `main` seguindo o prefixo do tipo da Issue (`feat/`, `fix/`, `docs/`, `ci/`, `chore/`, `refactor/`, `test/`):
+### Etapa 2: Criacao da Branch
+Criar uma branch descritiva a partir da `main` seguindo o prefixo do tipo da alteracao (`feat/`, `fix/`, `docs/`, `ci/`, `chore/`, `refactor/`, `test/`), **sem referenciar o numero da Issue no nome da branch**:
 ```powershell
-git checkout -b <tipo>/issue-<numero>-<slug-curto>
+git checkout -b <tipo>/<slug-curto>
 ```
 Exemplos:
-- `ci/issue-7-pipeline-and-mailpit`
-- `feat/issue-8-auth-mvp-pt-br`
-- `feat/issue-9-product-registration`
+- `ci/pipeline-and-mailpit`
+- `feat/auth-mvp-pt-br`
+- `feat/product-registration`
 
 ### Etapa 3: Implementacao Orientada a BDD e Camadas
 1. Ler os **Criterios de Aceite (BDD)** e o **Checklist de Tarefas Tecnicas** da Issue alvo.
