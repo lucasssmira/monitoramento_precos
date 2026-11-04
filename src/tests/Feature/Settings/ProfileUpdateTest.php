@@ -96,4 +96,27 @@ class ProfileUpdateTest extends TestCase
 
         $this->assertNotNull($user->fresh());
     }
+
+    public function test_profile_update_rejects_duplicate_email_with_pt_br_message(): void
+    {
+        User::factory()->create([
+            'email' => 'existente@example.com',
+        ]);
+
+        $user = User::factory()->create();
+
+        $response = $this
+            ->actingAs($user)
+            ->from(route('profile.edit'))
+            ->patch(route('profile.update'), [
+                'name' => 'Novo Nome',
+                'email' => 'existente@example.com',
+            ]);
+
+        $response
+            ->assertSessionHasErrors([
+                'email' => 'Este e-mail já está em uso.',
+            ])
+            ->assertRedirect(route('profile.edit'));
+    }
 }

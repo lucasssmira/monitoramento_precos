@@ -6,33 +6,18 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
 import { store } from '@/routes/password/confirm';
-import {
-    index as confirmOptions,
-    store as confirmStore,
-} from '@/actions/Laravel/Passkeys/Http/Controllers/PasskeyConfirmationController';
-import PasskeyVerify from '@/components/PasskeyVerify.vue';
 
 defineOptions({
     layout: {
-        title: 'Confirm password',
+        title: 'Confirmar senha',
         description:
-            'This is a secure area of the application. Please confirm your password before continuing.',
+            'Esta é uma área segura do sistema. Confirme sua senha antes de continuar.',
     },
 });
 </script>
 
 <template>
-    <Head title="Confirm password" />
-
-    <PasskeyVerify
-        :routes="{
-            options: confirmOptions(),
-            submit: confirmStore(),
-        }"
-        label="Confirm with passkey"
-        loading-label="Confirming..."
-        separator="Or confirm with password"
-    />
+    <Head title="Confirmar senha" />
 
     <Form
         v-bind="store.form()"
@@ -41,7 +26,7 @@ defineOptions({
     >
         <div class="space-y-6">
             <div class="grid gap-2">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password">Senha</Label>
                 <PasswordInput
                     id="password"
                     name="password"
@@ -49,6 +34,7 @@ defineOptions({
                     required
                     autocomplete="current-password"
                     autofocus
+                    placeholder="Sua senha"
                 />
 
                 <InputError :message="errors.password" />
@@ -61,7 +47,7 @@ defineOptions({
                     data-test="confirm-password-button"
                 >
                     <Spinner v-if="processing" />
-                    Confirm password
+                    Confirmar senha
                 </Button>
             </div>
         </div>
