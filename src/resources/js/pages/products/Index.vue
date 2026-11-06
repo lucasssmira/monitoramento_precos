@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Head, router, useForm } from '@inertiajs/vue3';
+import { Head, Link, router, useForm } from '@inertiajs/vue3';
 import {
     ExternalLink,
     Filter,
@@ -9,6 +9,7 @@ import {
     Play,
     RotateCcw,
     Trash2,
+    TrendingDown,
 } from '@lucide/vue';
 import { ref } from 'vue';
 import ProductController from '@/actions/App/Http/Controllers/ProductController';
@@ -39,6 +40,7 @@ import {
     checkNow as checkNowRoute,
     destroy as destroyRoute,
     index as productsIndex,
+    show as showRoute,
     toggleStatus as toggleStatusRoute,
     update as updateRoute,
 } from '@/routes/products';
@@ -520,11 +522,20 @@ const formatDate = (dateStr: string | null): string => {
                                     <h3
                                         class="text-base leading-tight font-semibold text-foreground"
                                     >
-                                        {{
-                                            product.nickname ||
-                                            product.title ||
-                                            product.normalized_url
-                                        }}
+                                        <Link
+                                            :href="
+                                                showRoute.url({
+                                                    product: product.id,
+                                                })
+                                            "
+                                            class="transition-colors hover:text-primary hover:underline"
+                                        >
+                                            {{
+                                                product.nickname ||
+                                                product.title ||
+                                                product.normalized_url
+                                            }}
+                                        </Link>
                                     </h3>
                                     <Badge variant="outline" class="text-xs">
                                         {{ product.category }}
@@ -643,6 +654,24 @@ const formatDate = (dateStr: string | null): string => {
                                     />
                                     <RotateCcw v-else class="size-3.5" />
                                     Verificar agora
+                                </Button>
+
+                                <Button
+                                    as-child
+                                    variant="outline"
+                                    size="sm"
+                                    class="h-8 gap-1 text-xs"
+                                >
+                                    <Link
+                                        :href="
+                                            showRoute.url({
+                                                product: product.id,
+                                            })
+                                        "
+                                    >
+                                        <TrendingDown class="size-3.5" />
+                                        Histórico
+                                    </Link>
                                 </Button>
 
                                 <a

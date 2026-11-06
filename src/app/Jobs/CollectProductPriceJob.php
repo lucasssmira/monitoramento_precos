@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Enums\ProductStatus;
 use App\Models\Product;
+use App\Services\PriceHistoryRecorderService;
 use App\Services\Scrapers\ScraperFactory;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
@@ -49,7 +50,7 @@ class CollectProductPriceJob implements ShouldQueue
     /**
      * Execute the job.
      */
-    public function handle(ScraperFactory $scraperFactory): void
+    public function handle(ScraperFactory $scraperFactory, ?PriceHistoryRecorderService $recorder = null): void
     {
         // Don't collect prices for paused products (RF-008)
         if ($this->product->status === ProductStatus::Paused) {
@@ -59,15 +60,27 @@ class CollectProductPriceJob implements ShouldQueue
         $scraper = $scraperFactory->make($this->product->domain);
         $scraped = $scraper->scrape($this->product->normalized_url, $this->product->id);
 
+        $resolvedPrice = $scraped->cashPrice ?? ($this->product->current_price !== null ? (float) $this->product->current_price : null);
+
         $this->product->update([
             'title' => $scraped->title !== '' ? $scraped->title : $this->product->title,
             'image_url' => $scraped->imageUrl ?? $this->product->image_url,
-            'current_price' => $scraped->cashPrice ?? $this->product->current_price,
+            'current_price' => $resolvedPrice,
             'installment_price' => $scraped->installmentPrice,
             'in_stock' => $scraped->inStock,
             'status' => ProductStatus::Active,
             'last_checked_at' => now(),
         ]);
+
+        if ($resolvedPrice !== null) {
+            $recorder ??= app(PriceHistoryRecorderService::class);
+            $recorder->record(
+                $this->product,
+                $resolvedPrice,
+                $scraped->installmentPrice,
+                $scraped->inStock
+            );
+        }
     }
 
     /**
