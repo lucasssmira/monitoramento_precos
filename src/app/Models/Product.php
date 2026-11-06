@@ -6,6 +6,7 @@ use App\Enums\ProductCategory;
 use App\Enums\ProductStatus;
 use Database\Factories\ProductFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -82,5 +83,16 @@ class Product extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Scope query to products eligible for periodic scraping (active and unstable).
+     *
+     * @param  Builder<$this>  $query
+     * @return Builder<$this>
+     */
+    public function scopeActiveForScraping(Builder $query): Builder
+    {
+        return $query->whereIn('status', [ProductStatus::Active, ProductStatus::Unstable]);
     }
 }

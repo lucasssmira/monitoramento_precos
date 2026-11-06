@@ -36,6 +36,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
 import {
+    checkNow as checkNowRoute,
     destroy as destroyRoute,
     index as productsIndex,
     toggleStatus as toggleStatusRoute,
@@ -59,6 +60,7 @@ interface ProductItem {
     status: string;
     status_label: string;
     last_checked_at: string | null;
+    last_manual_check_at: string | null;
     created_at: string | null;
 }
 
@@ -210,6 +212,22 @@ const toggleMonitoring = (product: ProductItem): void => {
     );
 };
 
+const checkingNowId = ref<number | null>(null);
+
+const requestCheckNow = (product: ProductItem): void => {
+    checkingNowId.value = product.id;
+    router.post(
+        checkNowRoute.url({ product: product.id }),
+        {},
+        {
+            preserveScroll: true,
+            onFinish: () => {
+                checkingNowId.value = null;
+            },
+        },
+    );
+};
+
 const formatCurrency = (value: number | null): string => {
     if (value === null || Number.isNaN(value)) {
         return 'Indisponível';
@@ -267,6 +285,13 @@ const formatDate = (dateStr: string | null): string => {
                     class="mb-4 rounded-md border border-green-200 bg-green-50 p-3 text-sm font-medium text-green-700 dark:border-green-900/50 dark:bg-green-950/50 dark:text-green-400"
                 >
                     {{ status }}
+                </div>
+
+                <div
+                    v-if="$page.props.errors?.manual_check"
+                    class="mb-4 rounded-md border border-amber-200 bg-amber-50 p-3 text-sm font-medium text-amber-800 dark:border-amber-900/50 dark:bg-amber-950/50 dark:text-amber-400"
+                >
+                    {{ $page.props.errors.manual_check }}
                 </div>
 
                 <form
@@ -602,6 +627,24 @@ const formatDate = (dateStr: string | null): string => {
                             <div
                                 class="flex flex-wrap items-center gap-2 pt-2 md:pt-0"
                             >
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    class="h-8 gap-1 text-xs"
+                                    :disabled="
+                                        checkingNowId === product.id ||
+                                        product.status === 'paused'
+                                    "
+                                    title="Verificar preços agora (mínimo de 10 minutos entre checagens)"
+                                    @click="requestCheckNow(product)"
+                                >
+                                    <Spinner
+                                        v-if="checkingNowId === product.id"
+                                    />
+                                    <RotateCcw v-else class="size-3.5" />
+                                    Verificar agora
+                                </Button>
+
                                 <a
                                     :href="product.url"
                                     target="_blank"

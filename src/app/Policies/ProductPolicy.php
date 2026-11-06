@@ -38,4 +38,12 @@ class ProductPolicy
     {
         return $product->user_id === $user->id;
     }
+
+    /**
+     * Determine whether the user can request an on-demand manual check.
+     */
+    public function checkNow(User $user, Product $product): bool
+    {
+        return $product->user_id === $user->id;
+    }
 }

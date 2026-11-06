@@ -11,6 +11,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('products', [ProductController::class, 'store'])->name('products.store');
     Route::put('products/{product}', [ProductController::class, 'update'])->name('products.update');
     Route::patch('products/{product}/toggle-status', [ProductController::class, 'toggleStatus'])->name('products.toggle-status');
+    Route::post('products/{product}/check-now', [ProductController::class, 'checkNow'])->name('products.check-now');
     Route::delete('products/{product}', [ProductController::class, 'destroy'])->name('products.destroy');
 });
 
