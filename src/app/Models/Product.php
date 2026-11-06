@@ -36,6 +36,7 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $updated_at
  * @property-read User $user
  * @property-read Collection<int, PriceHistory> $priceHistories
+ * @property-read Collection<int, Alert> $alerts
  */
 #[Fillable([
     'user_id',
@@ -94,6 +95,14 @@ class Product extends Model
     public function priceHistories(): HasMany
     {
         return $this->hasMany(PriceHistory::class);
+    }
+
+    /**
+     * @return HasMany<Alert, $this>
+     */
+    public function alerts(): HasMany
+    {
+        return $this->hasMany(Alert::class);
     }
 
     /**
