@@ -1,6 +1,12 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
-import { BookOpen, FolderGit2, LayoutGrid, PackageSearch } from '@lucide/vue';
+import {
+    Bell,
+    BookOpen,
+    FolderGit2,
+    LayoutGrid,
+    PackageSearch,
+} from '@lucide/vue';
 import AppLogo from '@/components/AppLogo.vue';
 import NavFooter from '@/components/NavFooter.vue';
 import NavMain from '@/components/NavMain.vue';
@@ -15,6 +21,7 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
+import { index as alertsIndex } from '@/routes/alerts';
 import { index as productsIndex } from '@/routes/products';
 import type { NavItem } from '@/types';
 
@@ -28,6 +35,11 @@ const mainNavItems: NavItem[] = [
         title: 'Produtos',
         href: productsIndex(),
         icon: PackageSearch,
+    },
+    {
+        title: 'Central de Alertas',
+        href: alertsIndex(),
+        icon: Bell,
     },
 ];
 
