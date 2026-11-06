@@ -79,7 +79,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     index.form = indexForm
 /**
 * @see \App\Http\Controllers\ProductController::store
- * @see app/Http/Controllers/ProductController.php:77
+ * @see app/Http/Controllers/ProductController.php:78
  * @route '/products'
  */
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -94,7 +94,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\ProductController::store
- * @see app/Http/Controllers/ProductController.php:77
+ * @see app/Http/Controllers/ProductController.php:78
  * @route '/products'
  */
 store.url = (options?: RouteQueryOptions) => {
@@ -103,7 +103,7 @@ store.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\ProductController::store
- * @see app/Http/Controllers/ProductController.php:77
+ * @see app/Http/Controllers/ProductController.php:78
  * @route '/products'
  */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -113,7 +113,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
     /**
 * @see \App\Http\Controllers\ProductController::store
- * @see app/Http/Controllers/ProductController.php:77
+ * @see app/Http/Controllers/ProductController.php:78
  * @route '/products'
  */
     const storeForm = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -123,7 +123,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
             /**
 * @see \App\Http\Controllers\ProductController::store
- * @see app/Http/Controllers/ProductController.php:77
+ * @see app/Http/Controllers/ProductController.php:78
  * @route '/products'
  */
         storeForm.post = (options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -134,7 +134,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     store.form = storeForm
 /**
 * @see \App\Http\Controllers\ProductController::update
- * @see app/Http/Controllers/ProductController.php:105
+ * @see app/Http/Controllers/ProductController.php:106
  * @route '/products/{product}'
  */
 export const update = (args: { product: number | { id: number } } | [product: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -149,7 +149,7 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\ProductController::update
- * @see app/Http/Controllers/ProductController.php:105
+ * @see app/Http/Controllers/ProductController.php:106
  * @route '/products/{product}'
  */
 update.url = (args: { product: number | { id: number } } | [product: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -182,7 +182,7 @@ update.url = (args: { product: number | { id: number } } | [product: number | { 
 
 /**
 * @see \App\Http\Controllers\ProductController::update
- * @see app/Http/Controllers/ProductController.php:105
+ * @see app/Http/Controllers/ProductController.php:106
  * @route '/products/{product}'
  */
 update.put = (args: { product: number | { id: number } } | [product: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -192,7 +192,7 @@ update.put = (args: { product: number | { id: number } } | [product: number | { 
 
     /**
 * @see \App\Http\Controllers\ProductController::update
- * @see app/Http/Controllers/ProductController.php:105
+ * @see app/Http/Controllers/ProductController.php:106
  * @route '/products/{product}'
  */
     const updateForm = (args: { product: number | { id: number } } | [product: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -207,7 +207,7 @@ update.put = (args: { product: number | { id: number } } | [product: number | { 
 
             /**
 * @see \App\Http\Controllers\ProductController::update
- * @see app/Http/Controllers/ProductController.php:105
+ * @see app/Http/Controllers/ProductController.php:106
  * @route '/products/{product}'
  */
         updateForm.put = (args: { product: number | { id: number } } | [product: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -223,7 +223,7 @@ update.put = (args: { product: number | { id: number } } | [product: number | { 
     update.form = updateForm
 /**
 * @see \App\Http\Controllers\ProductController::toggleStatus
- * @see app/Http/Controllers/ProductController.php:125
+ * @see app/Http/Controllers/ProductController.php:126
  * @route '/products/{product}/toggle-status'
  */
 export const toggleStatus = (args: { product: number | { id: number } } | [product: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
@@ -238,7 +238,7 @@ toggleStatus.definition = {
 
 /**
 * @see \App\Http\Controllers\ProductController::toggleStatus
- * @see app/Http/Controllers/ProductController.php:125
+ * @see app/Http/Controllers/ProductController.php:126
  * @route '/products/{product}/toggle-status'
  */
 toggleStatus.url = (args: { product: number | { id: number } } | [product: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -271,7 +271,7 @@ toggleStatus.url = (args: { product: number | { id: number } } | [product: numbe
 
 /**
 * @see \App\Http\Controllers\ProductController::toggleStatus
- * @see app/Http/Controllers/ProductController.php:125
+ * @see app/Http/Controllers/ProductController.php:126
  * @route '/products/{product}/toggle-status'
  */
 toggleStatus.patch = (args: { product: number | { id: number } } | [product: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
@@ -281,7 +281,7 @@ toggleStatus.patch = (args: { product: number | { id: number } } | [product: num
 
     /**
 * @see \App\Http\Controllers\ProductController::toggleStatus
- * @see app/Http/Controllers/ProductController.php:125
+ * @see app/Http/Controllers/ProductController.php:126
  * @route '/products/{product}/toggle-status'
  */
     const toggleStatusForm = (args: { product: number | { id: number } } | [product: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -296,7 +296,7 @@ toggleStatus.patch = (args: { product: number | { id: number } } | [product: num
 
             /**
 * @see \App\Http\Controllers\ProductController::toggleStatus
- * @see app/Http/Controllers/ProductController.php:125
+ * @see app/Http/Controllers/ProductController.php:126
  * @route '/products/{product}/toggle-status'
  */
         toggleStatusForm.patch = (args: { product: number | { id: number } } | [product: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -311,8 +311,87 @@ toggleStatus.patch = (args: { product: number | { id: number } } | [product: num
     
     toggleStatus.form = toggleStatusForm
 /**
+* @see \App\Http\Controllers\ProductController::checkNow
+ * @see app/Http/Controllers/ProductController.php:145
+ * @route '/products/{product}/check-now'
+ */
+export const checkNow = (args: { product: number | { id: number } } | [product: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: checkNow.url(args, options),
+    method: 'post',
+})
+
+checkNow.definition = {
+    methods: ["post"],
+    url: '/products/{product}/check-now',
+} satisfies RouteDefinition<["post"]>
+
+/**
+* @see \App\Http\Controllers\ProductController::checkNow
+ * @see app/Http/Controllers/ProductController.php:145
+ * @route '/products/{product}/check-now'
+ */
+checkNow.url = (args: { product: number | { id: number } } | [product: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
+    if (typeof args === 'string' || typeof args === 'number') {
+        args = { product: args }
+    }
+
+            if (typeof args === 'object' && !Array.isArray(args) && 'id' in args) {
+            args = { product: args.id }
+        }
+    
+    if (Array.isArray(args)) {
+        args = {
+                    product: args[0],
+                }
+    }
+
+    args = applyUrlDefaults(args)
+
+    const parsedArgs = {
+                        product: typeof args.product === 'object'
+                ? args.product.id
+                : args.product,
+                }
+
+    return checkNow.definition.url
+            .replace('{product}', parsedArgs.product.toString())
+            .replace(/\/+$/, '') + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\ProductController::checkNow
+ * @see app/Http/Controllers/ProductController.php:145
+ * @route '/products/{product}/check-now'
+ */
+checkNow.post = (args: { product: number | { id: number } } | [product: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: checkNow.url(args, options),
+    method: 'post',
+})
+
+    /**
+* @see \App\Http\Controllers\ProductController::checkNow
+ * @see app/Http/Controllers/ProductController.php:145
+ * @route '/products/{product}/check-now'
+ */
+    const checkNowForm = (args: { product: number | { id: number } } | [product: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+        action: checkNow.url(args, options),
+        method: 'post',
+    })
+
+            /**
+* @see \App\Http\Controllers\ProductController::checkNow
+ * @see app/Http/Controllers/ProductController.php:145
+ * @route '/products/{product}/check-now'
+ */
+        checkNowForm.post = (args: { product: number | { id: number } } | [product: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
+            action: checkNow.url(args, options),
+            method: 'post',
+        })
+    
+    checkNow.form = checkNowForm
+/**
 * @see \App\Http\Controllers\ProductController::destroy
- * @see app/Http/Controllers/ProductController.php:144
+ * @see app/Http/Controllers/ProductController.php:176
  * @route '/products/{product}'
  */
 export const destroy = (args: { product: number | { id: number } } | [product: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -327,7 +406,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\ProductController::destroy
- * @see app/Http/Controllers/ProductController.php:144
+ * @see app/Http/Controllers/ProductController.php:176
  * @route '/products/{product}'
  */
 destroy.url = (args: { product: number | { id: number } } | [product: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
@@ -360,7 +439,7 @@ destroy.url = (args: { product: number | { id: number } } | [product: number | {
 
 /**
 * @see \App\Http\Controllers\ProductController::destroy
- * @see app/Http/Controllers/ProductController.php:144
+ * @see app/Http/Controllers/ProductController.php:176
  * @route '/products/{product}'
  */
 destroy.delete = (args: { product: number | { id: number } } | [product: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -370,7 +449,7 @@ destroy.delete = (args: { product: number | { id: number } } | [product: number 
 
     /**
 * @see \App\Http\Controllers\ProductController::destroy
- * @see app/Http/Controllers/ProductController.php:144
+ * @see app/Http/Controllers/ProductController.php:176
  * @route '/products/{product}'
  */
     const destroyForm = (args: { product: number | { id: number } } | [product: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -385,7 +464,7 @@ destroy.delete = (args: { product: number | { id: number } } | [product: number 
 
             /**
 * @see \App\Http\Controllers\ProductController::destroy
- * @see app/Http/Controllers/ProductController.php:144
+ * @see app/Http/Controllers/ProductController.php:176
  * @route '/products/{product}'
  */
         destroyForm.delete = (args: { product: number | { id: number } } | [product: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteFormDefinition<'post'> => ({
@@ -399,6 +478,6 @@ destroy.delete = (args: { product: number | { id: number } } | [product: number 
         })
     
     destroy.form = destroyForm
-const ProductController = { index, store, update, toggleStatus, destroy }
+const ProductController = { index, store, update, toggleStatus, checkNow, destroy }
 
 export default ProductController

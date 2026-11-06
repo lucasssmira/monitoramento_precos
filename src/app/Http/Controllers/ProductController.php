@@ -55,6 +55,7 @@ class ProductController extends Controller
             'status' => $product->status->value,
             'status_label' => $product->status->label(),
             'last_checked_at' => $product->last_checked_at?->toIso8601String(),
+            'last_manual_check_at' => $product->last_manual_check_at?->toIso8601String(),
             'created_at' => $product->created_at?->toIso8601String(),
         ]);
 
@@ -136,6 +137,37 @@ class ProductController extends Controller
 
         return to_route('products.index')
             ->with('status', $message);
+    }
+
+    /**
+     * Request an immediate manual price check on-demand (RF-010, RN-005).
+     */
+    public function checkNow(Product $product): RedirectResponse
+    {
+        Gate::authorize('checkNow', $product);
+
+        $cooldownMinutes = (int) config('monitoring.manual_check_cooldown_minutes', 10);
+
+        if ($product->last_manual_check_at !== null) {
+            $nextAllowedAt = $product->last_manual_check_at->copy()->addMinutes($cooldownMinutes);
+
+            if (now()->lt($nextAllowedAt)) {
+                $remainingMinutes = (int) ceil(now()->diffInSeconds($nextAllowedAt) / 60);
+
+                return back()->withErrors([
+                    'manual_check' => "Aguarde {$remainingMinutes} minuto(s) para realizar uma nova verificação manual deste produto.",
+                ]);
+            }
+        }
+
+        $product->update([
+            'last_manual_check_at' => now(),
+        ]);
+
+        CollectProductPriceJob::dispatch($product);
+
+        return to_route('products.index')
+            ->with('status', 'Coleta sob demanda iniciada. Atualizando dados do produto...');
     }
 
     /**
