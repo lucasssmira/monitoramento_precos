@@ -180,6 +180,9 @@ jobs:
       - name: Instalar dependencias Node
         run: npm ci
 
+      - name: Executar auditoria de seguranca de pacotes NPM
+        run: npm audit --audit-level=high
+
       - name: Gerar rotas e tipos do Laravel Wayfinder
         run: php artisan wayfinder:generate --with-form
 
