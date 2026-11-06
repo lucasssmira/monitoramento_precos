@@ -9,6 +9,7 @@ use App\Http\Requests\Products\UpdateProductRequest;
 use App\Jobs\CollectProductPriceJob;
 use App\Models\Product;
 use App\Models\User;
+use App\Services\ProductAnalyticsService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
@@ -69,6 +70,41 @@ class ProductController extends Controller
             ],
             'maxProducts' => (int) config('monitoring.max_products_per_user', 20),
             'status' => $request->session()->get('status'),
+        ]);
+    }
+
+    /**
+     * Display product details with interactive price history and analytics (US-004, RF-014, RF-015).
+     */
+    public function show(Request $request, Product $product, ProductAnalyticsService $analyticsService): Response
+    {
+        Gate::authorize('view', $product);
+
+        $period = (int) $request->integer('period', 30);
+        $analytics = $analyticsService->getAnalytics($product, $period);
+
+        return Inertia::render('products/Show', [
+            'product' => [
+                'id' => $product->id,
+                'url' => $product->url,
+                'normalized_url' => $product->normalized_url,
+                'domain' => $product->domain,
+                'title' => $product->title,
+                'nickname' => $product->nickname,
+                'category' => $product->category->value,
+                'image_url' => $product->image_url,
+                'target_price' => (float) $product->target_price,
+                'current_price' => $product->current_price !== null ? (float) $product->current_price : null,
+                'installment_price' => $product->installment_price !== null ? (float) $product->installment_price : null,
+                'in_stock' => $product->in_stock,
+                'notify_on_stock' => $product->notify_on_stock,
+                'status' => $product->status->value,
+                'status_label' => $product->status->label(),
+                'last_checked_at' => $product->last_checked_at?->toIso8601String(),
+                'last_manual_check_at' => $product->last_manual_check_at?->toIso8601String(),
+                'created_at' => $product->created_at?->toIso8601String(),
+            ],
+            'analytics' => $analytics,
         ]);
     }
 
