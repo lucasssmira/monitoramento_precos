@@ -1,0 +1,702 @@
+<!DOCTYPE html><html lang="pt-BR" class="dark"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Principal — Monitor de Preços</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script id="tailwind-config">/** @type {import('tailwindcss').Config} */
+globalThis.tailwind = globalThis.tailwind || {};
+globalThis.tailwind.config = {
+  darkMode: 'class',
+  theme: {
+    extend: {
+      colors: {
+        'canvas': '#0B0F17',
+        'surface': '#131B2E',
+        'surface-elevated': '#1E293B',
+        'surface-border': '#26334D',
+        'primary': '#34D399',
+        'on-primary': '#064E3B',
+        'primary-glow': 'rgba(52, 211, 153, 0.12)',
+        'amber': '#FBBF24',
+        'on-amber': '#78350F',
+        'amber-glow': 'rgba(251, 191, 36, 0.12)',
+        'indigo': '#818CF8',
+        'on-indigo': '#1E1B4B',
+        'coral': '#F87171',
+        'on-coral': '#450A0A',
+        'coral-glow': 'rgba(248, 113, 113, 0.12)',
+        'text-primary': '#F8FAFC',
+        'text-secondary': '#94A3B8',
+        'text-muted': '#64748B',
+        'light-primary': '#059669',
+        'light-on-primary': '#1C1C1C',
+        'light-surface': '#131B2E',
+        'light-on-surface': '#F8FAFC',
+        'dark-primary': '#34D399',
+        'dark-on-primary': '#064E3B',
+        'dark-surface': '#131B2E',
+        'dark-on-surface': '#F8FAFC',
+      },
+      borderRadius: {
+        'sm': '6px',
+        'DEFAULT': '8px',
+        'md': '12px',
+        'lg': '16px',
+        'xl': '20px',
+        'full': '9999px',
+      },
+      spacing: {
+        'gutter-xs': '4px',
+        'gutter-sm': '8px',
+        'gutter-md': '16px',
+        'gutter-lg': '24px',
+        'gutter-xl': '32px',
+        'section': '40px',
+        'page-margin': '32px',
+      },
+      fontFamily: {
+        'display': ['"Plus Jakarta Sans"', 'sans-serif'],
+        'headline': ['"Plus Jakarta Sans"', 'sans-serif'],
+        'title': ['"Plus Jakarta Sans"', 'sans-serif'],
+        'body': ['"Plus Jakarta Sans"', 'sans-serif'],
+        'label': ['"Plus Jakarta Sans"', 'sans-serif'],
+        'price': ['"JetBrains Mono"', 'sans-serif'],
+      },
+      fontSize: {
+        'display-lg': ['36px', { lineHeight: '44px', letterSpacing: '-0.5px', fontWeight: '700' }],
+        'display-lg-mobile': ['28px', { lineHeight: '36px', letterSpacing: '-0.25px', fontWeight: '700' }],
+        'headline-lg': ['28px', { lineHeight: '36px', letterSpacing: '-0.25px', fontWeight: '700' }],
+        'headline-lg-mobile': ['22px', { lineHeight: '28px', fontWeight: '700' }],
+        'headline-md': ['20px', { lineHeight: '28px', fontWeight: '600' }],
+        'title-lg': ['18px', { lineHeight: '26px', fontWeight: '600' }],
+        'title-md': ['16px', { lineHeight: '24px', fontWeight: '600' }],
+        'body-lg': ['16px', { lineHeight: '24px', fontWeight: '400' }],
+        'body-md': ['14px', { lineHeight: '20px', fontWeight: '400' }],
+        'body-sm': ['12px', { lineHeight: '16px', fontWeight: '400' }],
+        'label-lg': ['14px', { lineHeight: '20px', fontWeight: '600' }],
+        'label-md': ['12px', { lineHeight: '16px', fontWeight: '600' }],
+        'label-sm': ['11px', { lineHeight: '14px', fontWeight: '600' }],
+        'price-xl': ['26px', { lineHeight: '32px', fontWeight: '700' }],
+        'price-lg': ['20px', { lineHeight: '28px', fontWeight: '700' }],
+        'price-md': ['15px', { lineHeight: '20px', fontWeight: '600' }],
+        'price-sm': ['13px', { lineHeight: '18px', fontWeight: '500' }],
+      },
+      transitionDuration: {
+        'state-change': '150ms',
+        'surface-enter': '250ms',
+        'surface-exit': '180ms',
+      },
+      transitionDelay: {
+        'state-change': '0ms',
+        'surface-enter': '0ms',
+        'surface-exit': '0ms',
+      },
+      transitionTimingFunction: {
+        'state-change': 'ease-out',
+        'surface-enter': 'cubic-bezier(0.16, 1, 0.3, 1)',
+        'surface-exit': 'cubic-bezier(0.4, 0, 1, 1)',
+      },
+    },
+  },
+};
+if (typeof module !== 'undefined') module.exports = globalThis.tailwind.config;
+</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+</head>
+<body class="bg-canvas text-text-primary min-h-[1024px] font-body antialiased selection:bg-primary/20 selection:text-primary" data-stitch-vh="min-h-[1024px]===min-h-screen">
+
+  <!-- Topbar Minimalista Unificado -->
+  <header class="sticky top-0 z-40 bg-surface/90 border-b border-surface-border backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between gap-4">
+      
+      <!-- Esquerda: Logo Pulse/Radar + Título -->
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-lg bg-primary-glow border border-primary/30 flex items-center justify-center text-primary relative">
+          <span class="material-symbols-outlined text-[20px] animate-pulse">radar</span>
+          <span class="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-primary ring-2 ring-surface"></span>
+        </div>
+        <div>
+          <span class="font-headline text-headline-md tracking-tight font-bold flex items-center gap-1.5">
+            Monitor de Preços
+            <span class="px-1.5 py-0.5 text-[10px] uppercase font-mono font-bold tracking-wider rounded bg-primary/10 text-primary border border-primary/20">PRO</span>
+          </span>
+          <span class="text-body-sm text-text-muted hidden sm:block">Inteligência de Varejo em Tempo Real</span>
+        </div>
+      </div>
+
+      <!-- Centro-Direita: Quota de Conta com Progresso -->
+      <div class="hidden md:flex items-center gap-3 bg-surface-elevated/70 border border-surface-border px-3.5 py-1.5 rounded-full">
+        <div class="flex flex-col">
+          <div class="flex items-center justify-between text-body-sm gap-2">
+            <span class="text-text-secondary text-[12px] font-medium">Capacidade do Radar:</span>
+            <span class="font-price text-[12px] font-semibold text-text-primary">8 / 20 monitorados</span>
+          </div>
+          <div class="w-36 h-1.5 bg-canvas rounded-full overflow-hidden mt-1">
+            <div class="h-full bg-gradient-to-r from-primary to-amber rounded-full" style="width: 40%;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Direita: Notificações, CTA Primário e Avatar -->
+      <div class="flex items-center gap-3">
+        <!-- Botão Notificações com Dot Âmbar -->
+        <a href="../modals-and-alerts/ModalsAndAlerts.html" class="relative p-2 rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-elevated transition-colors" title="Central de Alertas">
+          <span class="material-symbols-outlined text-[22px]">notifications</span>
+          <span class="absolute top-1.5 right-1.5 w-2.5 h-2.5 rounded-full bg-amber shadow-[0_0_8px_rgba(251,191,36,0.8)] animate-pulse"></span>
+        </a>
+
+        <!-- Botão CTA Primário -->
+        <a href="../modals-and-alerts/ModalsAndAlerts.html" data-component-id="button-primary" data-component-type="button" data-component-variant="primary" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary hover:bg-[#2bbd87] text-on-primary font-label text-label-md font-bold transition-all duration-state-change shadow-sm hover:shadow-[0_0_15px_rgba(52,211,153,0.3)]">
+          <span class="material-symbols-outlined text-[18px]">add</span>
+          <span>+ Monitorar Produto</span>
+        </a>
+
+        <!-- Avatar do Usuário -->
+        <div class="flex items-center gap-2 pl-2 border-l border-surface-border">
+          <div class="w-8 h-8 rounded-full bg-gradient-to-br from-indigo to-primary/40 p-0.5 flex items-center justify-center text-text-primary font-bold text-xs">
+            <span class="w-full h-full bg-surface rounded-full flex items-center justify-center">BR</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- Conteúdo Principal -->
+  <main class="max-w-7xl mx-auto px-6 py-8">
+    
+    <!-- Faixa de Resumo Compacta (3 Cartões KPI Mínimos) -->
+    <section class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8">
+      
+      <!-- KPI 1: Monitoramentos Ativos -->
+      <div class="bg-surface border border-surface-border rounded-lg p-5 flex items-center justify-between hover:border-surface-border/80 transition-colors">
+        <div>
+          <span class="text-body-sm text-text-secondary block font-medium">Monitoramentos Ativos</span>
+          <div class="font-price text-price-xl text-text-primary font-bold mt-1">12 ativos <span class="text-text-muted font-normal text-price-md">· 2 pausados</span></div>
+          <span class="text-body-sm text-text-muted mt-1 flex items-center gap-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+            Taxa de atualização média: 15 min
+          </span>
+        </div>
+        <div class="w-12 h-12 rounded-lg bg-surface-elevated border border-surface-border flex items-center justify-center text-indigo">
+          <span class="material-symbols-outlined text-[24px]">sensors</span>
+        </div>
+      </div>
+
+      <!-- KPI 2: Metas Atingidas Hoje (Destaque Emerald) -->
+      <div class="bg-surface border border-primary/40 bg-gradient-to-br from-surface to-primary-glow/20 rounded-lg p-5 flex items-center justify-between relative overflow-hidden shadow-sm">
+        <div class="relative z-10">
+          <span class="text-body-sm text-primary block font-semibold flex items-center gap-1">
+            <span class="material-symbols-outlined text-[16px]">price_check</span>
+            Metas Atingidas Hoje
+          </span>
+          <div class="font-price text-price-xl text-primary font-bold mt-1">3 produtos</div>
+          <span class="text-body-sm text-primary/80 mt-1 block">no preço alvo ou abaixo</span>
+        </div>
+        <div class="w-12 h-12 rounded-lg bg-primary-glow border border-primary/30 flex items-center justify-center text-primary relative z-10">
+          <span class="material-symbols-outlined text-[26px]">task_alt</span>
+        </div>
+        <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-primary/10 rounded-full blur-xl pointer-events-none"></div>
+      </div>
+
+      <!-- KPI 3: Maior Economia Real -->
+      <div class="bg-surface border border-surface-border rounded-lg p-5 flex items-center justify-between hover:border-surface-border/80 transition-colors">
+        <div>
+          <span class="text-body-sm text-text-secondary block font-medium">Maior Economia Real</span>
+          <div class="font-price text-price-xl text-primary font-bold mt-1">-22% <span class="text-text-muted font-normal text-price-md">abaixo da média</span></div>
+          <span class="text-body-sm text-text-muted mt-1 flex items-center gap-1">
+            <span class="text-amber font-mono font-medium">R$ 410,00</span> de desconto acumulado
+          </span>
+        </div>
+        <div class="w-12 h-12 rounded-lg bg-surface-elevated border border-surface-border flex items-center justify-center text-amber">
+          <span class="material-symbols-outlined text-[24px]">trending_down</span>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Barra Limpa de Busca e Filtros -->
+    <section class="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4 mb-6">
+      
+      <!-- Input de Busca -->
+      <div class="relative flex-1 max-w-lg">
+        <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-text-muted text-[20px]">search</span>
+        <input type="search" placeholder="Buscar por produto ou apelido..." class="w-full pl-10 pr-4 py-2.5 bg-surface border border-surface-border rounded-lg text-text-primary placeholder:text-text-muted font-body text-body-md focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none transition-colors">
+      </div>
+
+      <!-- Pílulas de Categoria + Filtro de Status -->
+      <div class="flex flex-wrap items-center gap-2">
+        <!-- Pills de Categoria -->
+        <div class="flex items-center gap-1.5 bg-surface border border-surface-border p-1 rounded-lg">
+          <button class="px-3 py-1.5 rounded-md font-label text-label-sm font-semibold bg-surface-elevated text-primary border border-primary/20 shadow-xs">Todos</button>
+          <button class="px-3 py-1.5 rounded-md font-label text-label-sm font-medium text-text-secondary hover:text-text-primary hover:bg-surface-elevated/50 transition-colors">Hardware</button>
+          <button class="px-3 py-1.5 rounded-md font-label text-label-sm font-medium text-text-secondary hover:text-text-primary hover:bg-surface-elevated/50 transition-colors">Periféricos</button>
+          <button class="px-3 py-1.5 rounded-md font-label text-label-sm font-medium text-text-secondary hover:text-text-primary hover:bg-surface-elevated/50 transition-colors">Smartphones</button>
+          <button class="px-3 py-1.5 rounded-md font-label text-label-sm font-medium text-text-secondary hover:text-text-primary hover:bg-surface-elevated/50 transition-colors">Eletro</button>
+        </div>
+
+        <!-- Dropdown de Status -->
+        <div class="relative">
+          <select class="appearance-none bg-surface border border-surface-border rounded-lg pl-3.5 pr-8 py-2 font-label text-label-sm text-text-primary focus:border-primary focus:outline-none cursor-pointer">
+            <option value="todos">Status: Todos</option>
+            <option value="meta">Meta Atingida</option>
+            <option value="estoque">Em Estoque</option>
+            <option value="pausados">Pausados</option>
+          </select>
+          <span class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 text-text-muted text-[16px] pointer-events-none">expand_more</span>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Grade de Produtos (3 Colunas em Desktop, Espaçamento Generoso) -->
+    <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+      <!-- Card 1: Meta Atingida (KaBuM! - GPU RTX 4070) -->
+      <article class="bg-surface border border-primary/40 rounded-lg p-5 flex flex-col justify-between hover:border-primary transition-all duration-state-change shadow-sm hover:shadow-[0_4px_20px_rgba(52,211,153,0.08)] group relative">
+        <div class="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-tr-lg pointer-events-none"></div>
+        <div>
+          <!-- Header do Card -->
+          <div class="flex items-center justify-between gap-2 mb-3.5">
+            <div class="flex items-center gap-2">
+              <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold tracking-wide bg-[#FF6500]/15 text-[#FF8533] border border-[#FF6500]/30 font-label">KaBuM!</span>
+              <span class="text-label-sm text-text-muted font-label">Hardware</span>
+            </div>
+            <!-- Emerald Pill: Meta Atingida! -->
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-label-sm font-semibold bg-primary-glow text-primary border border-primary/25 font-label">
+              <span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+              Meta Atingida!
+            </span>
+          </div>
+
+          <!-- Informações do Produto (Thumbnail 56x56 + Título 2 linhas) -->
+          <div class="flex items-start gap-3.5 mb-4">
+            <div class="w-14 h-14 rounded-lg bg-surface-elevated border border-surface-border shrink-0 flex items-center justify-center p-2 text-primary group-hover:scale-105 transition-transform">
+              <span class="material-symbols-outlined text-[28px]">memory</span>
+            </div>
+            <div class="min-w-0 flex-1">
+              <a href="../product-detail/ProductDetail.html" class="block">
+                <h3 class="font-title text-title-md text-text-primary line-clamp-2 leading-snug group-hover:text-primary transition-colors font-semibold">
+                  Placa de Vídeo RTX 4070 Super Asus Dual 12GB GDDR6X
+                </h3>
+              </a>
+              <span class="text-body-sm text-text-muted mt-0.5 block">Apelido: RTX 4070 Super</span>
+            </div>
+          </div>
+
+          <!-- Bloco de Comparação de Preços (Foco Visual) -->
+          <div class="bg-canvas/80 border border-surface-border rounded-lg p-3.5 mb-4 grid grid-cols-2 gap-3 items-center">
+            <!-- Lado Esquerdo (Preço à vista PIX) -->
+            <div>
+              <span class="block text-body-sm text-text-secondary text-[11px] font-medium mb-0.5">Preço à vista (PIX)</span>
+              <!-- Highlight Emerald por atingir a meta -->
+              <div class="font-price text-price-lg text-primary tabular-nums font-bold">R$ 3.899,00</div>
+              <span class="block text-[11px] text-text-muted mt-0.5">ou R$ 4.290,00 a prazo</span>
+            </div>
+            <!-- Lado Direito (Preço Alvo do Usuário) -->
+            <div class="border-l border-surface-border pl-3">
+              <span class="block text-body-sm text-text-secondary text-[11px] font-medium mb-0.5 flex items-center gap-1">
+                <span class="material-symbols-outlined text-amber text-[13px]">track_changes</span>
+                Preço Alvo
+              </span>
+              <div class="font-price text-price-md text-amber tabular-nums font-semibold">R$ 4.000,00</div>
+              <span class="block text-[11px] text-primary font-mono mt-0.5 font-semibold">-R$ 101,00 abaixo</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer do Card -->
+        <div class="flex items-center justify-between pt-3 border-t border-surface-border text-text-secondary">
+          <span class="text-body-sm text-text-muted flex items-center gap-1 text-[12px]">
+            <span class="material-symbols-outlined text-[14px]">schedule</span>
+            Verificado há 14 min
+          </span>
+          <div class="flex items-center gap-1">
+            <button type="button" title="Verificar agora" class="p-1.5 rounded-md hover:text-primary hover:bg-surface-elevated transition-colors">
+              <span class="material-symbols-outlined text-[18px]">sync</span>
+            </button>
+            <button type="button" title="Pausar" class="p-1.5 rounded-md hover:text-amber hover:bg-surface-elevated transition-colors">
+              <span class="material-symbols-outlined text-[18px]">pause</span>
+            </button>
+            <a href="../product-detail/ProductDetail.html" title="Ver Histórico" class="p-1.5 rounded-md hover:text-indigo hover:bg-surface-elevated transition-colors">
+              <span class="material-symbols-outlined text-[18px]">show_chart</span>
+            </a>
+            <button type="button" title="Menu" class="p-1.5 rounded-md hover:text-text-primary hover:bg-surface-elevated transition-colors">
+              <span class="material-symbols-outlined text-[18px]">more_vert</span>
+            </button>
+          </div>
+        </div>
+      </article>
+
+      <!-- Card 2: Em Estoque (Amazon - Monitor Dell 27 4K) -->
+      <article class="bg-surface border border-surface-border rounded-lg p-5 flex flex-col justify-between hover:border-text-muted/40 transition-all duration-state-change group">
+        <div>
+          <!-- Header do Card -->
+          <div class="flex items-center justify-between gap-2 mb-3.5">
+            <div class="flex items-center gap-2">
+              <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold tracking-wide bg-[#FF9900]/15 text-[#FFB03B] border border-[#FF9900]/30 font-label">Amazon</span>
+              <span class="text-label-sm text-text-muted font-label">Periféricos</span>
+            </div>
+            <!-- Neutral Pill: Em estoque -->
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-label-sm font-medium bg-surface-elevated text-text-secondary border border-surface-border font-label">
+              <span class="w-1.5 h-1.5 rounded-full bg-text-secondary"></span>
+              Em estoque
+            </span>
+          </div>
+
+          <!-- Informações do Produto -->
+          <div class="flex items-start gap-3.5 mb-4">
+            <div class="w-14 h-14 rounded-lg bg-surface-elevated border border-surface-border shrink-0 flex items-center justify-center p-2 text-indigo group-hover:scale-105 transition-transform">
+              <span class="material-symbols-outlined text-[28px]">desktop_windows</span>
+            </div>
+            <div class="min-w-0 flex-1">
+              <a href="../product-detail/ProductDetail.html" class="block">
+                <h3 class="font-title text-title-md text-text-primary line-clamp-2 leading-snug group-hover:text-primary transition-colors font-semibold">
+                  Monitor Dell UltraSharp 27&#34; 4K IPS U2723QE HDR400 USB-C
+                </h3>
+              </a>
+              <span class="text-body-sm text-text-muted mt-0.5 block">Apelido: Dell 4K Escritório</span>
+            </div>
+          </div>
+
+          <!-- Bloco de Comparação de Preços -->
+          <div class="bg-canvas/80 border border-surface-border rounded-lg p-3.5 mb-4 grid grid-cols-2 gap-3 items-center">
+            <div>
+              <span class="block text-body-sm text-text-secondary text-[11px] font-medium mb-0.5">Preço à vista (PIX)</span>
+              <!-- Valor normal #F8FAFC pois está acima da meta -->
+              <div class="font-price text-price-lg text-text-primary tabular-nums font-bold">R$ 3.499,00</div>
+              <span class="block text-[11px] text-text-muted mt-0.5">ou R$ 3.880,00 a prazo</span>
+            </div>
+            <div class="border-l border-surface-border pl-3">
+              <span class="block text-body-sm text-text-secondary text-[11px] font-medium mb-0.5 flex items-center gap-1">
+                <span class="material-symbols-outlined text-amber text-[13px]">track_changes</span>
+                Preço Alvo
+              </span>
+              <div class="font-price text-price-md text-amber tabular-nums font-semibold">R$ 3.200,00</div>
+              <span class="block text-[11px] text-text-muted font-mono mt-0.5">+R$ 299,00 da meta</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer do Card -->
+        <div class="flex items-center justify-between pt-3 border-t border-surface-border text-text-secondary">
+          <span class="text-body-sm text-text-muted flex items-center gap-1 text-[12px]">
+            <span class="material-symbols-outlined text-[14px]">schedule</span>
+            Verificado há 38 min
+          </span>
+          <div class="flex items-center gap-1">
+            <button type="button" title="Verificar agora" class="p-1.5 rounded-md hover:text-primary hover:bg-surface-elevated transition-colors">
+              <span class="material-symbols-outlined text-[18px]">sync</span>
+            </button>
+            <button type="button" title="Pausar" class="p-1.5 rounded-md hover:text-amber hover:bg-surface-elevated transition-colors">
+              <span class="material-symbols-outlined text-[18px]">pause</span>
+            </button>
+            <a href="../product-detail/ProductDetail.html" title="Ver Histórico" class="p-1.5 rounded-md hover:text-indigo hover:bg-surface-elevated transition-colors">
+              <span class="material-symbols-outlined text-[18px]">show_chart</span>
+            </a>
+            <button type="button" title="Menu" class="p-1.5 rounded-md hover:text-text-primary hover:bg-surface-elevated transition-colors">
+              <span class="material-symbols-outlined text-[18px]">more_vert</span>
+            </button>
+          </div>
+        </div>
+      </article>
+
+      <!-- Card 3: Coletando Dados (Mercado Livre - Smartphone Galaxy S24) -->
+      <article class="bg-surface border border-surface-border rounded-lg p-5 flex flex-col justify-between hover:border-text-muted/40 transition-all duration-state-change group">
+        <div>
+          <!-- Header do Card -->
+          <div class="flex items-center justify-between gap-2 mb-3.5">
+            <div class="flex items-center gap-2">
+              <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold tracking-wide bg-[#FFE600]/15 text-[#E5CE00] border border-[#FFE600]/30 font-label">Mercado Livre</span>
+              <span class="text-label-sm text-text-muted font-label">Smartphones</span>
+            </div>
+            <!-- Amber Pulsing Pill: Coletando dados... -->
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-label-sm font-semibold bg-amber-glow text-amber border border-amber/30 font-label">
+              <span class="w-1.5 h-1.5 rounded-full bg-amber animate-ping"></span>
+              Coletando dados...
+            </span>
+          </div>
+
+          <!-- Informações do Produto -->
+          <div class="flex items-start gap-3.5 mb-4">
+            <div class="w-14 h-14 rounded-lg bg-surface-elevated border border-surface-border shrink-0 flex items-center justify-center p-2 text-amber group-hover:scale-105 transition-transform">
+              <span class="material-symbols-outlined text-[28px]">smartphone</span>
+            </div>
+            <div class="min-w-0 flex-1">
+              <a href="../product-detail/ProductDetail.html" class="block">
+                <h3 class="font-title text-title-md text-text-primary line-clamp-2 leading-snug group-hover:text-primary transition-colors font-semibold">
+                  Samsung Galaxy S24 Plus 5G 256GB Cinza Titânio
+                </h3>
+              </a>
+              <span class="text-body-sm text-text-muted mt-0.5 block">Apelido: S24 Plus Pessoal</span>
+            </div>
+          </div>
+
+          <!-- Bloco de Comparação de Preços -->
+          <div class="bg-canvas/80 border border-surface-border rounded-lg p-3.5 mb-4 grid grid-cols-2 gap-3 items-center">
+            <div>
+              <span class="block text-body-sm text-text-secondary text-[11px] font-medium mb-0.5">Preço à vista (PIX)</span>
+              <div class="font-price text-price-lg text-text-primary tabular-nums font-bold">R$ 4.799,00</div>
+              <span class="block text-[11px] text-text-muted mt-0.5">ou R$ 5.299,00 a prazo</span>
+            </div>
+            <div class="border-l border-surface-border pl-3">
+              <span class="block text-body-sm text-text-secondary text-[11px] font-medium mb-0.5 flex items-center gap-1">
+                <span class="material-symbols-outlined text-amber text-[13px]">track_changes</span>
+                Preço Alvo
+              </span>
+              <div class="font-price text-price-md text-amber tabular-nums font-semibold">R$ 4.400,00</div>
+              <span class="block text-[11px] text-amber font-mono mt-0.5 font-medium">Verificando variações</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer do Card -->
+        <div class="flex items-center justify-between pt-3 border-t border-surface-border text-text-secondary">
+          <span class="text-body-sm text-text-muted flex items-center gap-1 text-[12px]">
+            <span class="material-symbols-outlined text-[14px]">sync</span>
+            Indexando histórico...
+          </span>
+          <div class="flex items-center gap-1">
+            <button type="button" title="Verificar agora" class="p-1.5 rounded-md hover:text-primary hover:bg-surface-elevated transition-colors">
+              <span class="material-symbols-outlined text-[18px]">sync</span>
+            </button>
+            <button type="button" title="Pausar" class="p-1.5 rounded-md hover:text-amber hover:bg-surface-elevated transition-colors">
+              <span class="material-symbols-outlined text-[18px]">pause</span>
+            </button>
+            <a href="../product-detail/ProductDetail.html" title="Ver Histórico" class="p-1.5 rounded-md hover:text-indigo hover:bg-surface-elevated transition-colors">
+              <span class="material-symbols-outlined text-[18px]">show_chart</span>
+            </a>
+            <button type="button" title="Menu" class="p-1.5 rounded-md hover:text-text-primary hover:bg-surface-elevated transition-colors">
+              <span class="material-symbols-outlined text-[18px]">more_vert</span>
+            </button>
+          </div>
+        </div>
+      </article>
+
+      <!-- Card 4: Esgotado (Pichau - Processador Ryzen 7 7800X3D) -->
+      <article class="bg-surface border border-surface-border rounded-lg p-5 flex flex-col justify-between hover:border-text-muted/40 transition-all duration-state-change group">
+        <div>
+          <!-- Header do Card -->
+          <div class="flex items-center justify-between gap-2 mb-3.5">
+            <div class="flex items-center gap-2">
+              <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold tracking-wide bg-[#E51B24]/15 text-[#FF5A62] border border-[#E51B24]/30 font-label">Pichau</span>
+              <span class="text-label-sm text-text-muted font-label">Hardware</span>
+            </div>
+            <!-- Soft Coral Pill: Esgotado -->
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-label-sm font-semibold bg-coral-glow text-coral border border-coral/30 font-label">
+              <span class="w-1.5 h-1.5 rounded-full bg-coral"></span>
+              Esgotado
+            </span>
+          </div>
+
+          <!-- Informações do Produto -->
+          <div class="flex items-start gap-3.5 mb-4">
+            <div class="w-14 h-14 rounded-lg bg-surface-elevated border border-surface-border shrink-0 flex items-center justify-center p-2 text-coral group-hover:scale-105 transition-transform">
+              <span class="material-symbols-outlined text-[28px]">developer_board</span>
+            </div>
+            <div class="min-w-0 flex-1">
+              <a href="../product-detail/ProductDetail.html" class="block">
+                <h3 class="font-title text-title-md text-text-primary line-clamp-2 leading-snug group-hover:text-primary transition-colors font-semibold">
+                  Processador AMD Ryzen 7 7800X3D 4.2GHz 8-Core AM5
+                </h3>
+              </a>
+              <span class="text-body-sm text-text-muted mt-0.5 block">Apelido: Ryzen 7800X3D Gamer</span>
+            </div>
+          </div>
+
+          <!-- Bloco de Comparação de Preços -->
+          <div class="bg-canvas/80 border border-surface-border rounded-lg p-3.5 mb-4 grid grid-cols-2 gap-3 items-center">
+            <div>
+              <span class="block text-body-sm text-text-secondary text-[11px] font-medium mb-0.5">Último Preço (PIX)</span>
+              <div class="font-price text-price-lg text-text-secondary tabular-nums font-bold">R$ 2.749,90</div>
+              <span class="block text-[11px] text-coral mt-0.5 font-medium">Avisar ao voltar estoque</span>
+            </div>
+            <div class="border-l border-surface-border pl-3">
+              <span class="block text-body-sm text-text-secondary text-[11px] font-medium mb-0.5 flex items-center gap-1">
+                <span class="material-symbols-outlined text-amber text-[13px]">track_changes</span>
+                Preço Alvo
+              </span>
+              <div class="font-price text-price-md text-amber tabular-nums font-semibold">R$ 2.650,00</div>
+              <span class="block text-[11px] text-text-muted font-mono mt-0.5">Alvo ativo</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer do Card -->
+        <div class="flex items-center justify-between pt-3 border-t border-surface-border text-text-secondary">
+          <span class="text-body-sm text-text-muted flex items-center gap-1 text-[12px]">
+            <span class="material-symbols-outlined text-[14px]">schedule</span>
+            Verificado há 1 hora
+          </span>
+          <div class="flex items-center gap-1">
+            <button type="button" title="Verificar agora" class="p-1.5 rounded-md hover:text-primary hover:bg-surface-elevated transition-colors">
+              <span class="material-symbols-outlined text-[18px]">sync</span>
+            </button>
+            <button type="button" title="Pausar" class="p-1.5 rounded-md hover:text-amber hover:bg-surface-elevated transition-colors">
+              <span class="material-symbols-outlined text-[18px]">pause</span>
+            </button>
+            <a href="../product-detail/ProductDetail.html" title="Ver Histórico" class="p-1.5 rounded-md hover:text-indigo hover:bg-surface-elevated transition-colors">
+              <span class="material-symbols-outlined text-[18px]">show_chart</span>
+            </a>
+            <button type="button" title="Menu" class="p-1.5 rounded-md hover:text-text-primary hover:bg-surface-elevated transition-colors">
+              <span class="material-symbols-outlined text-[18px]">more_vert</span>
+            </button>
+          </div>
+        </div>
+      </article>
+
+      <!-- Card 5: Meta Atingida (Magalu - Air Fryer Mondial) -->
+      <article class="bg-surface border border-primary/40 rounded-lg p-5 flex flex-col justify-between hover:border-primary transition-all duration-state-change shadow-sm hover:shadow-[0_4px_20px_rgba(52,211,153,0.08)] group relative">
+        <div class="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-tr-lg pointer-events-none"></div>
+        <div>
+          <!-- Header do Card -->
+          <div class="flex items-center justify-between gap-2 mb-3.5">
+            <div class="flex items-center gap-2">
+              <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold tracking-wide bg-[#0086FF]/15 text-[#33A1FF] border border-[#0086FF]/30 font-label">Magalu</span>
+              <span class="text-label-sm text-text-muted font-label">Eletro</span>
+            </div>
+            <!-- Emerald Pill: Meta Atingida! -->
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-label-sm font-semibold bg-primary-glow text-primary border border-primary/25 font-label">
+              <span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+              Meta Atingida!
+            </span>
+          </div>
+
+          <!-- Informações do Produto -->
+          <div class="flex items-start gap-3.5 mb-4">
+            <div class="w-14 h-14 rounded-lg bg-surface-elevated border border-surface-border shrink-0 flex items-center justify-center p-2 text-primary group-hover:scale-105 transition-transform">
+              <span class="material-symbols-outlined text-[28px]">kitchen</span>
+            </div>
+            <div class="min-w-0 flex-1">
+              <a href="../product-detail/ProductDetail.html" class="block">
+                <h3 class="font-title text-title-md text-text-primary line-clamp-2 leading-snug group-hover:text-primary transition-colors font-semibold">
+                  Fritadeira Sem Óleo Air Fryer Mondial Grand Family 5L Inox
+                </h3>
+              </a>
+              <span class="text-body-sm text-text-muted mt-0.5 block">Apelido: Air Fryer 5L Cozinha</span>
+            </div>
+          </div>
+
+          <!-- Bloco de Comparação de Preços -->
+          <div class="bg-canvas/80 border border-surface-border rounded-lg p-3.5 mb-4 grid grid-cols-2 gap-3 items-center">
+            <div>
+              <span class="block text-body-sm text-text-secondary text-[11px] font-medium mb-0.5">Preço à vista (PIX)</span>
+              <div class="font-price text-price-lg text-primary tabular-nums font-bold">R$ 299,90</div>
+              <span class="block text-[11px] text-text-muted mt-0.5">ou R$ 349,00 a prazo</span>
+            </div>
+            <div class="border-l border-surface-border pl-3">
+              <span class="block text-body-sm text-text-secondary text-[11px] font-medium mb-0.5 flex items-center gap-1">
+                <span class="material-symbols-outlined text-amber text-[13px]">track_changes</span>
+                Preço Alvo
+              </span>
+              <div class="font-price text-price-md text-amber tabular-nums font-semibold">R$ 330,00</div>
+              <span class="block text-[11px] text-primary font-mono mt-0.5 font-semibold">-R$ 30,10 abaixo</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer do Card -->
+        <div class="flex items-center justify-between pt-3 border-t border-surface-border text-text-secondary">
+          <span class="text-body-sm text-text-muted flex items-center gap-1 text-[12px]">
+            <span class="material-symbols-outlined text-[14px]">schedule</span>
+            Verificado há 5 min
+          </span>
+          <div class="flex items-center gap-1">
+            <button type="button" title="Verificar agora" class="p-1.5 rounded-md hover:text-primary hover:bg-surface-elevated transition-colors">
+              <span class="material-symbols-outlined text-[18px]">sync</span>
+            </button>
+            <button type="button" title="Pausar" class="p-1.5 rounded-md hover:text-amber hover:bg-surface-elevated transition-colors">
+              <span class="material-symbols-outlined text-[18px]">pause</span>
+            </button>
+            <a href="../product-detail/ProductDetail.html" title="Ver Histórico" class="p-1.5 rounded-md hover:text-indigo hover:bg-surface-elevated transition-colors">
+              <span class="material-symbols-outlined text-[18px]">show_chart</span>
+            </a>
+            <button type="button" title="Menu" class="p-1.5 rounded-md hover:text-text-primary hover:bg-surface-elevated transition-colors">
+              <span class="material-symbols-outlined text-[18px]">more_vert</span>
+            </button>
+          </div>
+        </div>
+      </article>
+
+      <!-- Card 6: Em Estoque (Amazon - Teclado Mecânico Logitech MX Mechanical) -->
+      <article class="bg-surface border border-surface-border rounded-lg p-5 flex flex-col justify-between hover:border-text-muted/40 transition-all duration-state-change group">
+        <div>
+          <!-- Header do Card -->
+          <div class="flex items-center justify-between gap-2 mb-3.5">
+            <div class="flex items-center gap-2">
+              <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold tracking-wide bg-[#FF9900]/15 text-[#FFB03B] border border-[#FF9900]/30 font-label">Amazon</span>
+              <span class="text-label-sm text-text-muted font-label">Periféricos</span>
+            </div>
+            <!-- Neutral Pill: Em estoque -->
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-label-sm font-medium bg-surface-elevated text-text-secondary border border-surface-border font-label">
+              <span class="w-1.5 h-1.5 rounded-full bg-text-secondary"></span>
+              Em estoque
+            </span>
+          </div>
+
+          <!-- Informações do Produto -->
+          <div class="flex items-start gap-3.5 mb-4">
+            <div class="w-14 h-14 rounded-lg bg-surface-elevated border border-surface-border shrink-0 flex items-center justify-center p-2 text-indigo group-hover:scale-105 transition-transform">
+              <span class="material-symbols-outlined text-[28px]">keyboard</span>
+            </div>
+            <div class="min-w-0 flex-1">
+              <a href="../product-detail/ProductDetail.html" class="block">
+                <h3 class="font-title text-title-md text-text-primary line-clamp-2 leading-snug group-hover:text-primary transition-colors font-semibold">
+                  Teclado Sem Fio Logitech MX Mechanical Tactile Quiet
+                </h3>
+              </a>
+              <span class="text-body-sm text-text-muted mt-0.5 block">Apelido: MX Mechanical Dev</span>
+            </div>
+          </div>
+
+          <!-- Bloco de Comparação de Preços -->
+          <div class="bg-canvas/80 border border-surface-border rounded-lg p-3.5 mb-4 grid grid-cols-2 gap-3 items-center">
+            <div>
+              <span class="block text-body-sm text-text-secondary text-[11px] font-medium mb-0.5">Preço à vista (PIX)</span>
+              <div class="font-price text-price-lg text-text-primary tabular-nums font-bold">R$ 849,00</div>
+              <span class="block text-[11px] text-text-muted mt-0.5">ou R$ 940,00 a prazo</span>
+            </div>
+            <div class="border-l border-surface-border pl-3">
+              <span class="block text-body-sm text-text-secondary text-[11px] font-medium mb-0.5 flex items-center gap-1">
+                <span class="material-symbols-outlined text-amber text-[13px]">track_changes</span>
+                Preço Alvo
+              </span>
+              <div class="font-price text-price-md text-amber tabular-nums font-semibold">R$ 780,00</div>
+              <span class="block text-[11px] text-text-muted font-mono mt-0.5">+R$ 69,00 da meta</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer do Card -->
+        <div class="flex items-center justify-between pt-3 border-t border-surface-border text-text-secondary">
+          <span class="text-body-sm text-text-muted flex items-center gap-1 text-[12px]">
+            <span class="material-symbols-outlined text-[14px]">schedule</span>
+            Verificado há 22 min
+          </span>
+          <div class="flex items-center gap-1">
+            <button type="button" title="Verificar agora" class="p-1.5 rounded-md hover:text-primary hover:bg-surface-elevated transition-colors">
+              <span class="material-symbols-outlined text-[18px]">sync</span>
+            </button>
+            <button type="button" title="Pausar" class="p-1.5 rounded-md hover:text-amber hover:bg-surface-elevated transition-colors">
+              <span class="material-symbols-outlined text-[18px]">pause</span>
+            </button>
+            <a href="../product-detail/ProductDetail.html" title="Ver Histórico" class="p-1.5 rounded-md hover:text-indigo hover:bg-surface-elevated transition-colors">
+              <span class="material-symbols-outlined text-[18px]">show_chart</span>
+            </a>
+            <button type="button" title="Menu" class="p-1.5 rounded-md hover:text-text-primary hover:bg-surface-elevated transition-colors">
+              <span class="material-symbols-outlined text-[18px]">more_vert</span>
+            </button>
+          </div>
+        </div>
+      </article>
+
+    </section>
+
+  </main>
+
+
+
+</body></html>

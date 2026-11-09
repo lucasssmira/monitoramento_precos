@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
-import AppLogoIcon from '@/components/AppLogoIcon.vue';
+import { Radar } from '@lucide/vue';
 import { home } from '@/routes';
 
 defineProps<{
@@ -11,27 +11,38 @@ defineProps<{
 
 <template>
     <div
-        class="flex min-h-svh flex-col items-center justify-center gap-6 bg-background p-6 md:p-10"
+        class="flex min-h-svh flex-col items-center justify-center gap-6 bg-canvas p-6 font-body text-text-primary md:p-10"
     >
-        <div class="w-full max-w-sm">
-            <div class="flex flex-col gap-8">
-                <div class="flex flex-col items-center gap-4">
+        <div
+            class="w-full max-w-md rounded-2xl border border-surface-border bg-surface p-6 shadow-2xl md:p-8"
+        >
+            <div class="flex flex-col gap-6">
+                <div class="flex flex-col items-center gap-3">
                     <Link
                         :href="home()"
-                        class="flex flex-col items-center gap-2 font-medium"
+                        class="flex items-center gap-2.5 font-medium transition-opacity hover:opacity-90"
                     >
                         <div
-                            class="mb-1 flex h-9 w-9 items-center justify-center rounded-md"
+                            class="relative flex size-10 items-center justify-center rounded-xl border border-primary/30 bg-primary-glow text-primary"
                         >
-                            <AppLogoIcon
-                                class="size-9 fill-current text-[var(--foreground)] dark:text-white"
+                            <Radar class="size-5 animate-pulse" />
+                            <span
+                                class="absolute -top-0.5 -right-0.5 size-2 rounded-full bg-primary ring-2 ring-surface"
                             />
                         </div>
-                        <span class="sr-only">{{ title }}</span>
+                        <span
+                            class="font-headline text-headline-md font-bold tracking-tight text-text-primary"
+                        >
+                            Monitor de Preços
+                        </span>
                     </Link>
-                    <div class="space-y-2 text-center">
-                        <h1 class="text-xl font-medium">{{ title }}</h1>
-                        <p class="text-center text-sm text-muted-foreground">
+                    <div class="space-y-1.5 text-center">
+                        <h1
+                            class="font-headline text-title-lg font-bold text-text-primary"
+                        >
+                            {{ title }}
+                        </h1>
+                        <p class="text-center text-body-sm text-text-secondary">
                             {{ description }}
                         </p>
                     </div>

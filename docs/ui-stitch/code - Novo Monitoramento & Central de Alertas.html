@@ -1,0 +1,389 @@
+<!DOCTYPE html><html lang="pt-BR" class="dark"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Novo Monitoramento &amp; Central de Alertas — Monitor de Preços</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script id="tailwind-config">/** @type {import('tailwindcss').Config} */
+globalThis.tailwind = globalThis.tailwind || {};
+globalThis.tailwind.config = {
+  darkMode: 'class',
+  theme: {
+    extend: {
+      colors: {
+        'canvas': '#0B0F17',
+        'surface': '#131B2E',
+        'surface-elevated': '#1E293B',
+        'surface-border': '#26334D',
+        'primary': '#34D399',
+        'on-primary': '#064E3B',
+        'primary-glow': 'rgba(52, 211, 153, 0.12)',
+        'amber': '#FBBF24',
+        'on-amber': '#78350F',
+        'amber-glow': 'rgba(251, 191, 36, 0.12)',
+        'indigo': '#818CF8',
+        'on-indigo': '#1E1B4B',
+        'coral': '#F87171',
+        'on-coral': '#450A0A',
+        'coral-glow': 'rgba(248, 113, 113, 0.12)',
+        'text-primary': '#F8FAFC',
+        'text-secondary': '#94A3B8',
+        'text-muted': '#64748B',
+        'light-primary': '#059669',
+        'light-on-primary': '#1C1C1C',
+        'light-surface': '#131B2E',
+        'light-on-surface': '#F8FAFC',
+        'dark-primary': '#34D399',
+        'dark-on-primary': '#064E3B',
+        'dark-surface': '#131B2E',
+        'dark-on-surface': '#F8FAFC',
+      },
+      borderRadius: {
+        'sm': '6px',
+        'DEFAULT': '8px',
+        'md': '12px',
+        'lg': '16px',
+        'xl': '20px',
+        'full': '9999px',
+      },
+      spacing: {
+        'gutter-xs': '4px',
+        'gutter-sm': '8px',
+        'gutter-md': '16px',
+        'gutter-lg': '24px',
+        'gutter-xl': '32px',
+        'section': '40px',
+        'page-margin': '32px',
+      },
+      fontFamily: {
+        'display': ['"Plus Jakarta Sans"', 'sans-serif'],
+        'headline': ['"Plus Jakarta Sans"', 'sans-serif'],
+        'title': ['"Plus Jakarta Sans"', 'sans-serif'],
+        'body': ['"Plus Jakarta Sans"', 'sans-serif'],
+        'label': ['"Plus Jakarta Sans"', 'sans-serif'],
+        'price': ['"JetBrains Mono"', 'sans-serif'],
+      },
+      fontSize: {
+        'display-lg': ['36px', { lineHeight: '44px', letterSpacing: '-0.5px', fontWeight: '700' }],
+        'display-lg-mobile': ['28px', { lineHeight: '36px', letterSpacing: '-0.25px', fontWeight: '700' }],
+        'headline-lg': ['28px', { lineHeight: '36px', letterSpacing: '-0.25px', fontWeight: '700' }],
+        'headline-lg-mobile': ['22px', { lineHeight: '28px', fontWeight: '700' }],
+        'headline-md': ['20px', { lineHeight: '28px', fontWeight: '600' }],
+        'title-lg': ['18px', { lineHeight: '26px', fontWeight: '600' }],
+        'title-md': ['16px', { lineHeight: '24px', fontWeight: '600' }],
+        'body-lg': ['16px', { lineHeight: '24px', fontWeight: '400' }],
+        'body-md': ['14px', { lineHeight: '20px', fontWeight: '400' }],
+        'body-sm': ['12px', { lineHeight: '16px', fontWeight: '400' }],
+        'label-lg': ['14px', { lineHeight: '20px', fontWeight: '600' }],
+        'label-md': ['12px', { lineHeight: '16px', fontWeight: '600' }],
+        'label-sm': ['11px', { lineHeight: '14px', fontWeight: '600' }],
+        'price-xl': ['26px', { lineHeight: '32px', fontWeight: '700' }],
+        'price-lg': ['20px', { lineHeight: '28px', fontWeight: '700' }],
+        'price-md': ['15px', { lineHeight: '20px', fontWeight: '600' }],
+        'price-sm': ['13px', { lineHeight: '18px', fontWeight: '500' }],
+      },
+      transitionDuration: {
+        'state-change': '150ms',
+        'surface-enter': '250ms',
+        'surface-exit': '180ms',
+      },
+      transitionDelay: {
+        'state-change': '0ms',
+        'surface-enter': '0ms',
+        'surface-exit': '0ms',
+      },
+      transitionTimingFunction: {
+        'state-change': 'ease-out',
+        'surface-enter': 'cubic-bezier(0.16, 1, 0.3, 1)',
+        'surface-exit': 'cubic-bezier(0.4, 0, 1, 1)',
+      },
+    },
+  },
+};
+if (typeof module !== 'undefined') module.exports = globalThis.tailwind.config;
+</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+</head>
+<body class="bg-canvas text-text-primary min-h-[1024px] font-body antialiased relative overflow-x-hidden selection:bg-primary/20 selection:text-primary" data-stitch-vh="min-h-[1024px]===min-h-screen">
+
+  <!-- Fundo do Dashboard Desfocado/Escurecido pelo Backdrop -->
+  <div class="fixed inset-0 bg-canvas/80 backdrop-blur-sm z-30 pointer-events-none"></div>
+
+  <!-- Layout de Apresentação das Duas Funcionalidades Pedidas no Screen 3:
+       Lado Esquerdo/Centro: Modal "+ Monitorar Produto"
+       Lado Direito: Slide-over Drawer "Central de Alertas" -->
+  <div class="relative z-40 min-h-[1024px] flex flex-col lg:flex-row items-start justify-between p-6 gap-6" data-stitch-vh="min-h-[1024px]===min-h-screen">
+
+    <!-- Modal "+ Monitorar Produto" (Container Centralizado em destaque) -->
+    <div class="w-full lg:max-w-xl mx-auto my-auto bg-surface-elevated border border-surface-border rounded-xl shadow-2xl p-6 md:p-8 relative">
+      
+      <!-- Topo do Modal -->
+      <div class="flex items-center justify-between pb-5 border-b border-surface-border mb-6">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-lg bg-primary-glow border border-primary/30 flex items-center justify-center text-primary">
+            <span class="material-symbols-outlined text-[22px]">add_link</span>
+          </div>
+          <div>
+            <h2 class="font-headline text-headline-md font-bold text-text-primary leading-tight">Adicionar Novo Produto</h2>
+            <p class="text-body-sm text-text-secondary mt-0.5">Insira o link para rastrear variações e disparar alertas.</p>
+          </div>
+        </div>
+        <a href="../main-dashboard/MainDashboard.html" class="p-1.5 rounded-lg text-text-muted hover:text-text-primary hover:bg-surface transition-colors" title="Fechar">
+          <span class="material-symbols-outlined text-[20px]">close</span>
+        </a>
+      </div>
+
+      <!-- Formulário Limpo de Monitoramento -->
+      <form class="space-y-5" onsubmit="event.preventDefault();">
+        
+        <!-- Campo: URL do Produto -->
+        <div>
+          <label class="block font-label text-label-md text-text-secondary mb-1.5 font-medium flex items-center justify-between">
+            <span>URL do Produto</span>
+            <span class="text-[11px] text-primary flex items-center gap-1 font-mono">
+              <span class="material-symbols-outlined text-[13px]">bolt</span>
+              Detecção automática de preço
+            </span>
+          </label>
+          <div class="relative">
+            <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-text-muted text-[18px]">link</span>
+            <input type="url" required placeholder="Cole o link do produto (ex: https://www.kabum.com.br/produto/...)" value="https://www.amazon.com.br/dp/B0D5BXX71P" class="w-full pl-10 pr-4 py-2.5 bg-surface border border-surface-border rounded-lg text-text-primary placeholder:text-text-muted font-body text-body-sm focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none transition-colors">
+          </div>
+          
+          <!-- Badges de Lojas Suportadas Logo Abaixo -->
+          <div class="mt-3 flex items-center gap-2 flex-wrap">
+            <span class="text-[11px] text-text-muted font-medium">Lojas suportadas:</span>
+            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-[#FF9900]/15 text-[#FFB03B] border border-[#FF9900]/30 font-label">Amazon</span>
+            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-[#FF6500]/15 text-[#FF8533] border border-[#FF6500]/30 font-label">KaBuM!</span>
+            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-[#FFE600]/15 text-[#E5CE00] border border-[#FFE600]/30 font-label">Mercado Livre</span>
+            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-[#0086FF]/15 text-[#33A1FF] border border-[#0086FF]/30 font-label">Magalu</span>
+            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-[#E51B24]/15 text-[#FF5A62] border border-[#E51B24]/30 font-label">Pichau</span>
+          </div>
+        </div>
+
+        <!-- Linha em Duas Colunas: Preço Alvo (R$) + Categoria -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          
+          <!-- Preço Alvo com foco Warm Amber -->
+          <div>
+            <label class="block font-label text-label-md text-text-secondary mb-1.5 font-medium flex items-center justify-between">
+              <span>Preço Alvo (R$)</span>
+              <span class="text-amber text-[11px] font-medium flex items-center gap-0.5">
+                <span class="material-symbols-outlined text-[13px]">notifications_active</span>
+                Gatilho
+              </span>
+            </label>
+            <div class="relative">
+              <span class="absolute left-3.5 top-1/2 -translate-y-1/2 font-price text-text-muted text-sm font-semibold">R$</span>
+              <input type="text" inputmode="decimal" value="3.200,00" placeholder="0,00" class="w-full pl-10 pr-4 py-2.5 bg-surface border border-amber/50 rounded-lg text-text-primary placeholder:text-text-muted font-price text-price-md font-semibold focus:border-amber focus:ring-1 focus:ring-amber focus:outline-none transition-colors tabular-nums">
+            </div>
+            <span class="text-[11px] text-text-muted mt-1 block">Você será alertado quando cair deste valor.</span>
+          </div>
+
+          <!-- Categoria -->
+          <div>
+            <label class="block font-label text-label-md text-text-secondary mb-1.5 font-medium">Categoria</label>
+            <div class="relative">
+              <select class="w-full appearance-none bg-surface border border-surface-border rounded-lg pl-3.5 pr-8 py-2.5 font-label text-label-md text-text-primary focus:border-primary focus:outline-none cursor-pointer">
+                <option value="hardware">Hardware</option>
+                <option value="perifericos" selected>Periféricos</option>
+                <option value="smartphones">Smartphones</option>
+                <option value="eletro">Eletrodomésticos</option>
+                <option value="games">Jogos &amp; Consoles</option>
+              </select>
+              <span class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 text-text-muted text-[18px] pointer-events-none">expand_more</span>
+            </div>
+            <span class="text-[11px] text-text-muted mt-1 block">Organiza seus cards no painel.</span>
+          </div>
+
+        </div>
+
+        <!-- Apelido do Produto (Opcional) -->
+        <div>
+          <label class="block font-label text-label-md text-text-secondary mb-1.5 font-medium flex items-center justify-between">
+            <span>Apelido do Produto</span>
+            <span class="text-text-muted text-[11px] font-normal">(Opcional)</span>
+          </label>
+          <input type="text" placeholder="Ex: Dell 4K Escritório ou RTX 4070 Setup" value="Monitor Dell UltraSharp 27" class="w-full px-3.5 py-2.5 bg-surface border border-surface-border rounded-lg text-text-primary placeholder:text-text-muted font-body text-body-sm focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none transition-colors">
+        </div>
+
+        <!-- Toggle Switch Suave: Avisar também quando voltar ao estoque -->
+        <div class="flex items-center justify-between p-3.5 bg-surface border border-surface-border rounded-lg">
+          <div class="flex items-center gap-2.5">
+            <span class="material-symbols-outlined text-amber text-[20px]">inventory_2</span>
+            <div>
+              <span class="font-label text-label-md text-text-primary block font-medium">Avisar também quando voltar ao estoque</span>
+              <span class="text-body-sm text-text-muted text-[11px]">Disparar alerta prioritário caso o produto esteja esgotado.</span>
+            </div>
+          </div>
+          <!-- Toggle ativo -->
+          <label class="relative inline-flex items-center cursor-pointer">
+            <input type="checkbox" checked class="sr-only peer">
+            <div class="w-11 h-6 bg-canvas border border-surface-border peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[&#39;&#39;] after:absolute after:top-[2px] after:left-[2px] after:bg-text-primary after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+          </label>
+        </div>
+
+        <!-- Botões de Ação do Modal -->
+        <div class="flex items-center justify-end gap-3 pt-3">
+          <a href="../main-dashboard/MainDashboard.html" class="px-4 py-2.5 rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface font-label text-label-md font-medium transition-colors">
+            Cancelar
+          </a>
+          <button type="submit" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-primary hover:bg-[#2bbd87] text-on-primary font-label text-label-md font-bold transition-all shadow-md hover:shadow-[0_0_15px_rgba(52,211,153,0.3)]">
+            <span class="material-symbols-outlined text-[18px]">radar</span>
+            <span>Iniciar Monitoramento</span>
+          </button>
+        </div>
+
+      </form>
+
+    </div>
+
+    <!-- Central de Alertas (Right Slide-over Drawer) -->
+    <aside class="w-full lg:w-[420px] bg-surface-elevated border border-surface-border rounded-xl shadow-2xl p-6 flex flex-col shrink-0">
+      
+      <!-- Topo da Central de Alertas -->
+      <div class="flex items-center justify-between pb-4 border-b border-surface-border mb-5">
+        <div class="flex items-center gap-2.5">
+          <div class="relative">
+            <span class="material-symbols-outlined text-amber text-[24px]">notifications_active</span>
+            <span class="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-amber ring-2 ring-surface-elevated animate-ping"></span>
+          </div>
+          <div>
+            <h3 class="font-headline text-headline-md font-bold text-text-primary leading-tight">Central de Alertas</h3>
+            <span class="text-[12px] text-text-muted">4 notificações disparadas hoje</span>
+          </div>
+        </div>
+        <div class="flex items-center gap-1">
+          <button type="button" class="text-xs text-text-muted hover:text-primary transition-colors pr-2">Limpar</button>
+          <a href="../main-dashboard/MainDashboard.html" class="p-1 rounded-lg text-text-muted hover:text-text-primary hover:bg-surface transition-colors">
+            <span class="material-symbols-outlined text-[18px]">close</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Feed Limpo de Notificações Disparadas -->
+      <div class="space-y-4 overflow-y-auto max-h-[720px] pr-1">
+
+        <!-- Card Alerta 1: Queda de Preço / Target Hit (Emerald Accent) -->
+        <div class="bg-surface border border-primary/40 rounded-lg p-4 relative overflow-hidden group hover:border-primary transition-colors">
+          <div class="flex items-start justify-between gap-2 mb-2">
+            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-bold bg-primary-glow text-primary font-label">
+              <span class="material-symbols-outlined text-[12px]">trending_down</span>
+              Meta de Preço Atingida!
+            </span>
+            <span class="text-[11px] text-text-muted font-mono">há 14 min</span>
+          </div>
+
+          <h4 class="font-title text-title-md font-semibold text-text-primary line-clamp-2 leading-snug">
+            Placa de Vídeo RTX 4070 Super Asus Dual 12GB
+          </h4>
+          <span class="text-[11px] text-text-muted block mt-0.5">KaBuM! • Hardware</span>
+
+          <!-- Preço Anterior Riscado vs Novo Preço PIX em Bold Emerald -->
+          <div class="mt-3 p-2.5 rounded-md bg-canvas/70 border border-surface-border flex items-baseline justify-between">
+            <div>
+              <span class="text-[11px] text-text-muted block">Preço anterior:</span>
+              <span class="font-price text-text-muted line-through text-sm tabular-nums">R$ 4.399,00</span>
+            </div>
+            <div class="text-right">
+              <span class="text-[11px] text-primary font-medium block">Novo Preço à Vista (PIX):</span>
+              <span class="font-price text-price-lg text-primary font-bold tabular-nums">R$ 3.899,00</span>
+            </div>
+          </div>
+
+          <!-- Link Comprar Agora -->
+          <div class="mt-3.5 flex items-center justify-between pt-2 border-t border-surface-border">
+            <span class="text-[11px] text-amber font-mono font-medium">-R$ 101,00 abaixo da meta</span>
+            <a href="https://www.kabum.com.br" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 font-label text-label-sm font-bold text-primary hover:underline">
+              <span>Comprar agora</span>
+              <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Card Alerta 2: Voltou ao Estoque (Warm Amber Accent) -->
+        <div class="bg-surface border border-amber/40 rounded-lg p-4 relative overflow-hidden group hover:border-amber transition-colors">
+          <div class="flex items-start justify-between gap-2 mb-2">
+            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-bold bg-amber-glow text-amber font-label">
+              <span class="material-symbols-outlined text-[12px]">inventory_2</span>
+              Voltou ao Estoque!
+            </span>
+            <span class="text-[11px] text-text-muted font-mono">há 42 min</span>
+          </div>
+
+          <h4 class="font-title text-title-md font-semibold text-text-primary line-clamp-2 leading-snug">
+            Processador AMD Ryzen 7 7800X3D 4.2GHz AM5
+          </h4>
+          <span class="text-[11px] text-text-muted block mt-0.5">Pichau • Hardware</span>
+
+          <!-- Preço Atual & Estoque -->
+          <div class="mt-3 p-2.5 rounded-md bg-canvas/70 border border-surface-border flex items-baseline justify-between">
+            <div>
+              <span class="text-[11px] text-text-muted block">Status de Estoque:</span>
+              <span class="text-[12px] text-amber font-semibold flex items-center gap-1 mt-0.5">
+                <span class="w-1.5 h-1.5 rounded-full bg-amber"></span>
+                Poucas unidades
+              </span>
+            </div>
+            <div class="text-right">
+              <span class="text-[11px] text-text-secondary block">Preço PIX Atual:</span>
+              <span class="font-price text-price-md text-text-primary font-bold tabular-nums">R$ 2.749,90</span>
+            </div>
+          </div>
+
+          <!-- Link Ir para a Loja -->
+          <div class="mt-3.5 flex items-center justify-between pt-2 border-t border-surface-border">
+            <span class="text-[11px] text-text-muted font-mono">Alvo: R$ 2.650,00</span>
+            <a href="https://www.pichau.com.br" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 font-label text-label-sm font-bold text-amber hover:underline">
+              <span>Ir para a Loja</span>
+              <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Card Alerta 3: Queda de Preço (Emerald Accent) -->
+        <div class="bg-surface border border-surface-border rounded-lg p-4 relative overflow-hidden group hover:border-primary/40 transition-colors">
+          <div class="flex items-start justify-between gap-2 mb-2">
+            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-bold bg-primary-glow text-primary font-label">
+              <span class="material-symbols-outlined text-[12px]">trending_down</span>
+              Meta de Preço Atingida!
+            </span>
+            <span class="text-[11px] text-text-muted font-mono">há 2 horas</span>
+          </div>
+
+          <h4 class="font-title text-title-md font-semibold text-text-primary line-clamp-2 leading-snug">
+            Fritadeira Sem Óleo Air Fryer Mondial 5L Inox
+          </h4>
+          <span class="text-[11px] text-text-muted block mt-0.5">Magalu • Eletrodomésticos</span>
+
+          <div class="mt-3 p-2.5 rounded-md bg-canvas/70 border border-surface-border flex items-baseline justify-between">
+            <div>
+              <span class="text-[11px] text-text-muted block">Preço anterior:</span>
+              <span class="font-price text-text-muted line-through text-sm tabular-nums">R$ 389,00</span>
+            </div>
+            <div class="text-right">
+              <span class="text-[11px] text-primary font-medium block">Novo Preço PIX:</span>
+              <span class="font-price text-price-lg text-primary font-bold tabular-nums">R$ 299,90</span>
+            </div>
+          </div>
+
+          <div class="mt-3.5 flex items-center justify-between pt-2 border-t border-surface-border">
+            <span class="text-[11px] text-amber font-mono font-medium">-R$ 30,10 abaixo da meta</span>
+            <a href="https://www.magazineluiza.com.br" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 font-label text-label-sm font-bold text-primary hover:underline">
+              <span>Comprar agora</span>
+              <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+            </a>
+          </div>
+        </div>
+
+      </div>
+
+    </aside>
+
+  </div>
+
+
+
+</body></html>
