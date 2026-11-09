@@ -34,6 +34,7 @@ A documentacao esta organizada nas seguintes secoes principais:
 
 === "Arquitetura"
     - [**Visao Arquitetural**](arquitetura/visao-geral.md): Componentes, diagramas conceituais e visao macro da infraestrutura.
+    - [**Identidade Visual & Design System**](arquitetura/identidade-visual.md): Paleta em modo escuro exclusivo (*Nocturne Emerald & Warm Amber*), tipografia tabular e especificacao de componentes de UI.
     - [**Pipeline CI/CD (Day 0)**](arquitetura/ci-cd.md): Esteira automatizada de verificacoes de estilo, testes e deploy.
 
 ---
