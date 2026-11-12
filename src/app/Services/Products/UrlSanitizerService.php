@@ -31,6 +31,17 @@ class UrlSanitizerService
         'pf_rd_r',
         'qid',
         'sr',
+        'crid',
+        'dib',
+        'dib_tag',
+        'keywords',
+        'sprefix',
+        'ufe',
+        'gad_source',
+        'gad_campaignid',
+        'gbraid',
+        'wbraid',
+        'from',
     ];
 
     /**
@@ -99,7 +110,12 @@ class UrlSanitizerService
         foreach ($params as $key => $value) {
             $lowerKey = strtolower((string) $key);
 
-            if (str_starts_with($lowerKey, 'utm_') || in_array($lowerKey, self::TRACKING_PARAMETERS, true)) {
+            if (
+                str_starts_with($lowerKey, 'utm_')
+                || str_starts_with($lowerKey, 'matt_')
+                || str_starts_with($lowerKey, 'cq_')
+                || in_array($lowerKey, self::TRACKING_PARAMETERS, true)
+            ) {
                 continue;
             }
 

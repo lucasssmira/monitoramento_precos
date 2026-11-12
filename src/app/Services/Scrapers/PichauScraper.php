@@ -32,6 +32,8 @@ class PichauScraper extends AbstractHttpScraper
             '[data-cy="price-avista"]',
             '.price-avista',
             '[data-testid="cash-price"]',
+            '[class*="price_vista"]',
+            'meta[name="product:price:amount"]',
         ];
     }
 
@@ -41,6 +43,8 @@ class PichauScraper extends AbstractHttpScraper
             '[data-cy="price-parcelado"]',
             '.price-parcelado',
             '[data-testid="installment-price"]',
+            '[class*="price_total"]',
+            '[class*="price_parcelado"]',
         ];
     }
 

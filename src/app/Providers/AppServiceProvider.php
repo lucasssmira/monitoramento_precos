@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Jobs\CollectProductPriceJob;
 use Carbon\CarbonImmutable;
 use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Foundation\DevCommands;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\RateLimiter;
@@ -28,6 +29,16 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->configureDefaults();
         $this->configureRateLimiting();
+        $this->configureDevCommands();
+    }
+
+    /**
+     * Register queue worker and scheduler in `php artisan dev` / `composer run dev` (RF-010).
+     */
+    protected function configureDevCommands(): void
+    {
+        DevCommands::artisan('queue:listen --tries=3 --timeout=60', 'queue');
+        DevCommands::artisan('schedule:work', 'schedule');
     }
 
     /**

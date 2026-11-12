@@ -281,4 +281,87 @@ describe('HTTP Execution and Structured Logging (RNF-005 / RNF-008)', function (
                 && $context['extraction_status'] === 'success'
             );
     });
+
+    it('extracts installment price from Kabum __NEXT_DATA__ payload when regularPrice selector is absent', function () {
+        $html = <<<'HTML'
+        <!DOCTYPE html>
+        <html lang="pt-BR">
+        <head>
+            <script id="__NEXT_DATA__" type="application/json">
+            {
+                "props": {
+                    "pageProps": {
+                        "product": {
+                            "prices": {
+                                "oldPrice": 7999,
+                                "priceWithDiscount": 4994.10,
+                                "price": 5549.00,
+                                "discountPercentage": 10
+                            }
+                        }
+                    }
+                }
+            }
+            </script>
+        </head>
+        <body>
+            <h1 itemprop="name">Notebook Gamer Acer Nitro V15 RTX 4050</h1>
+            <h4 class="finalPrice">R$ 4.994,10</h4>
+        </body>
+        </html>
+        HTML;
+
+        $data = (new KabumScraper)->extractFromHtml($html);
+
+        expect($data->title)->toBe('Notebook Gamer Acer Nitro V15 RTX 4050')
+            ->and($data->cashPrice)->toBe(4994.10)
+            ->and($data->installmentPrice)->toBe(5549.00)
+            ->and($data->inStock)->toBeTrue();
+    });
+
+    it('extracts Amazon total installment price from highlight-total-line-desktop even when equal to cash price', function () {
+        $html = <<<'HTML'
+        <!DOCTYPE html>
+        <html lang="pt-BR">
+        <body>
+            <span id="productTitle">Notebook Acer Nitro V 15</span>
+            <div id="corePriceDisplay_desktop_feature_div">
+                <span class="priceToPay"><span class="a-offscreen">R$ 5.299,00</span></span>
+            </div>
+            <span class="highlight-total-line-desktop">(total parcelado R$ 5.299,00)</span>
+        </body>
+        </html>
+        HTML;
+
+        $data = (new AmazonScraper)->extractFromHtml($html);
+
+        expect($data->title)->toBe('Notebook Acer Nitro V 15')
+            ->and($data->cashPrice)->toBe(5299.00)
+            ->and($data->installmentPrice)->toBe(5299.00)
+            ->and($data->inStock)->toBeTrue();
+    });
+
+    it('throws RuntimeException and logs selector_failure when HTTP 200 returns an anti-bot challenge page without price or stock signals', function () {
+        Log::spy();
+
+        Http::fake([
+            'https://mercadolivre.com.br/*' => Http::response(
+                '<!DOCTYPE html><html lang="pt-BR"><head><title>Mercado Libre</title></head><body><div id="root">Verifique sua conta</div></body></html>',
+                200
+            ),
+        ]);
+
+        $scraper = new MercadoLivreScraper;
+
+        expect(fn () => $scraper->scrape('https://mercadolivre.com.br/p/MLB67293164', 99))
+            ->toThrow(RuntimeException::class);
+
+        Log::shouldHaveReceived('warning')
+            ->once()
+            ->withArgs(fn (string $event, array $context): bool => $event === 'product.scrape.failed'
+                && $context['product_id'] === 99
+                && $context['domain'] === 'mercadolivre.com.br'
+                && $context['extraction_status'] === 'selector_failure'
+            );
+    });
 });
