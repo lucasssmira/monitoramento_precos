@@ -45,7 +45,8 @@ class AmazonScraper extends AbstractHttpScraper
             '[data-testid="installment-price"]',
             '#installmentCalculator_feature_div .a-offscreen',
             '#corePriceDisplay_desktop_feature_div .basisPrice .a-offscreen',
-            '.a-text-price .a-offscreen',
+            '.highlight-total-line-desktop',
+            '.highlight-total-line-mobile',
         ];
     }
 

@@ -56,11 +56,27 @@ abstract class AbstractHttpScraper implements ProductScraperInterface
             throw new RuntimeException("Falha HTTP {$httpStatus} ao coletar dados de {$this->domain()}.");
         }
 
-        $result = $this->extractFromHtml($response->body(), $httpStatus, $durationMs);
+        $html = $response->body();
+        $result = $this->extractFromHtml($html, $httpStatus, $durationMs);
 
-        $extractionStatus = ($result->title !== '' && ($result->cashPrice !== null || ! $result->inStock))
-            ? 'success'
-            : 'selector_failure';
+        $crawler = new Crawler($html);
+        $jsonLd = $this->jsonLdParser->extract($crawler);
+        $hasValidData = $result->title !== ''
+            && $result->title !== 'Produto sem título'
+            && ($result->cashPrice !== null || $this->hasExplicitOutOfStockSignal($crawler, $jsonLd['inStock']));
+
+        if (! $hasValidData) {
+            Log::warning('product.scrape.failed', [
+                'product_id' => $productId,
+                'url' => $url,
+                'domain' => $this->domain(),
+                'duration_ms' => $durationMs,
+                'http_status' => $httpStatus,
+                'extraction_status' => 'selector_failure',
+            ]);
+
+            throw new RuntimeException("Não foi possível extrair os dados do produto em {$this->domain()} (bloqueio anti-bot ou estrutura alterada).");
+        }
 
         Log::info('product.scrape.completed', [
             'product_id' => $productId,
@@ -68,7 +84,7 @@ abstract class AbstractHttpScraper implements ProductScraperInterface
             'domain' => $this->domain(),
             'duration_ms' => $durationMs,
             'http_status' => $httpStatus,
-            'extraction_status' => $extractionStatus,
+            'extraction_status' => 'success',
             'in_stock' => $result->inStock,
             'cash_price' => $result->cashPrice,
             'installment_price' => $result->installmentPrice,
@@ -81,6 +97,7 @@ abstract class AbstractHttpScraper implements ProductScraperInterface
     {
         $crawler = new Crawler($html);
         $jsonLd = $this->jsonLdParser->extract($crawler);
+        $structured = $this->extractStructuredFromDom($crawler);
 
         $title = $this->extractFirstText($crawler, $this->titleSelectors())
             ?? $jsonLd['title']
@@ -94,15 +111,11 @@ abstract class AbstractHttpScraper implements ProductScraperInterface
         $domCashPrice = $this->extractPriceFromSelectors($crawler, $this->cashPriceSelectors());
         $domInstallmentPrice = $this->extractPriceFromSelectors($crawler, $this->installmentPriceSelectors());
 
-        $cashPrice = $domCashPrice ?? $jsonLd['cashPrice'];
-        $installmentPrice = $domInstallmentPrice ?? $jsonLd['installmentPrice'];
+        $cashPrice = $domCashPrice ?? $structured['cashPrice'] ?? $jsonLd['cashPrice'];
+        $installmentPrice = $domInstallmentPrice ?? $structured['installmentPrice'] ?? $jsonLd['installmentPrice'];
 
-        if ($cashPrice !== null && $installmentPrice !== null) {
-            if ($installmentPrice < $cashPrice) {
-                [$cashPrice, $installmentPrice] = [$installmentPrice, $cashPrice];
-            } elseif (abs($installmentPrice - $cashPrice) < 0.01) {
-                $installmentPrice = null;
-            }
+        if ($cashPrice !== null && $installmentPrice !== null && $installmentPrice < $cashPrice) {
+            [$cashPrice, $installmentPrice] = [$installmentPrice, $cashPrice];
         }
 
         $inStock = $this->determineStockAvailability($crawler, $jsonLd['inStock'], $cashPrice);
@@ -117,6 +130,19 @@ abstract class AbstractHttpScraper implements ProductScraperInterface
             httpStatus: $httpStatus,
             durationMs: $durationMs,
         );
+    }
+
+    /**
+     * Extract store-specific structured JSON embedded in the DOM (e.g., __NEXT_DATA__).
+     *
+     * @return array{cashPrice: ?float, installmentPrice: ?float}
+     */
+    protected function extractStructuredFromDom(Crawler $crawler): array
+    {
+        return [
+            'cashPrice' => null,
+            'installmentPrice' => null,
+        ];
     }
 
     /**
@@ -279,6 +305,10 @@ abstract class AbstractHttpScraper implements ProductScraperInterface
             return false;
         }
 
+        if ($jsonLdStock === true) {
+            return true;
+        }
+
         $bodyText = mb_strtolower($crawler->filter('body')->count() > 0 ? $crawler->filter('body')->text('') : '');
 
         foreach ($this->outOfStockPhrases() as $phrase) {
@@ -287,10 +317,29 @@ abstract class AbstractHttpScraper implements ProductScraperInterface
             }
         }
 
-        if ($jsonLdStock === true) {
+        return $cashPrice !== null;
+    }
+
+    protected function hasExplicitOutOfStockSignal(Crawler $crawler, ?bool $jsonLdStock): bool
+    {
+        if ($jsonLdStock === false) {
             return true;
         }
 
-        return $cashPrice !== null;
+        foreach ($this->outOfStockSelectors() as $selector) {
+            if ($crawler->filter($selector)->count() > 0) {
+                return true;
+            }
+        }
+
+        $bodyText = mb_strtolower($crawler->filter('body')->count() > 0 ? $crawler->filter('body')->text('') : '');
+
+        foreach ($this->outOfStockPhrases() as $phrase) {
+            if ($bodyText !== '' && str_contains($bodyText, mb_strtolower($phrase))) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

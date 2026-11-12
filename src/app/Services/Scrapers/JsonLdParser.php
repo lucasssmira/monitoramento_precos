@@ -103,13 +103,23 @@ class JsonLdParser
             return null;
         }
 
-        if (preg_match('/(\d{1,3}(?:\.\d{3})+,\d{2}|\d+,\d{2}|\d+\.\d{2}|\d+)/', $trimmed, $matches) !== 1) {
+        if (preg_match('/(\d{1,3}(?:\.\d{3})+,\d{2}|\d{1,3}(?:,\d{3})+\.\d{2}|\d+,\d{2}|\d+\.\d{2}|\d+)/', $trimmed, $matches) !== 1) {
             return null;
         }
 
         $numberToken = $matches[1];
 
-        if (str_contains($numberToken, ',')) {
+        if (str_contains($numberToken, ',') && str_contains($numberToken, '.')) {
+            $lastComma = strrpos($numberToken, ',');
+            $lastDot = strrpos($numberToken, '.');
+
+            if ($lastComma !== false && $lastDot !== false && $lastComma > $lastDot) {
+                $normalized = str_replace('.', '', $numberToken);
+                $normalized = str_replace(',', '.', $normalized);
+            } else {
+                $normalized = str_replace(',', '', $numberToken);
+            }
+        } elseif (str_contains($numberToken, ',')) {
             $normalized = str_replace('.', '', $numberToken);
             $normalized = str_replace(',', '.', $normalized);
         } else {

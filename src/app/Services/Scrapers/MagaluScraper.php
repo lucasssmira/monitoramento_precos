@@ -39,6 +39,7 @@ class MagaluScraper extends AbstractHttpScraper
         return [
             '[data-testid="installment-price"]',
             '[data-testid="price-original"]',
+            '[data-testid="mod-bestinstallment"] p',
         ];
     }
 
