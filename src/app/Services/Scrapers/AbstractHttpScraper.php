@@ -144,14 +144,32 @@ abstract class AbstractHttpScraper implements ProductScraperInterface
      */
     protected function fetchHtml(string $url): Response
     {
-        return Http::withHeaders([
+        return $this->sendGetRequest($url, $this->requestHeaders());
+    }
+
+    /**
+     * @param  array<string, string>  $headers
+     */
+    protected function sendGetRequest(string $url, array $headers): Response
+    {
+        return Http::withHeaders($headers)
+            ->timeout(15)
+            ->get($url);
+    }
+
+    /**
+     * Default HTTP headers for product page requests.
+     *
+     * @return array<string, string>
+     */
+    protected function requestHeaders(): array
+    {
+        return [
             'User-Agent' => $this->randomUserAgent(),
             'Accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
             'Accept-Language' => 'pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7',
             'Cache-Control' => 'no-cache',
-        ])
-            ->timeout(15)
-            ->get($url);
+        ];
     }
 
     /**
