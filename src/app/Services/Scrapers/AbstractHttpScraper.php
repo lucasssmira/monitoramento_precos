@@ -4,6 +4,7 @@ namespace App\Services\Scrapers;
 
 use App\Contracts\ProductScraperInterface;
 use App\DataTransferObjects\ScrapedProductData;
+use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use RuntimeException;
@@ -31,14 +32,7 @@ abstract class AbstractHttpScraper implements ProductScraperInterface
     {
         $startedAt = hrtime(true);
 
-        $response = Http::withHeaders([
-            'User-Agent' => $this->randomUserAgent(),
-            'Accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-            'Accept-Language' => 'pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7',
-            'Cache-Control' => 'no-cache',
-        ])
-            ->timeout(15)
-            ->get($url);
+        $response = $this->fetchHtml($url);
 
         $durationMs = (int) round((hrtime(true) - $startedAt) / 1_000_000);
         $httpStatus = $response->status();
@@ -143,6 +137,21 @@ abstract class AbstractHttpScraper implements ProductScraperInterface
             'cashPrice' => null,
             'installmentPrice' => null,
         ];
+    }
+
+    /**
+     * Execute the HTTP GET request to retrieve the product HTML.
+     */
+    protected function fetchHtml(string $url): Response
+    {
+        return Http::withHeaders([
+            'User-Agent' => $this->randomUserAgent(),
+            'Accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+            'Accept-Language' => 'pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7',
+            'Cache-Control' => 'no-cache',
+        ])
+            ->timeout(15)
+            ->get($url);
     }
 
     /**

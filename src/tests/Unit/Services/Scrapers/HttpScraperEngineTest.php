@@ -364,4 +364,22 @@ describe('HTTP Execution and Structured Logging (RNF-005 / RNF-008)', function (
                 && $context['extraction_status'] === 'selector_failure'
             );
     });
+
+    it('falls back to magazinevoce mirror when magazineluiza returns HTTP 403', function () {
+        Http::fake([
+            'https://magazineluiza.com.br/*' => Http::response('Forbidden', 403),
+            'https://www.magazinevoce.com.br/magazinevoce/*' => Http::response(
+                '<!DOCTYPE html><html lang="pt-BR"><body><h1 data-testid="heading-product-title">Notebook Gamer Acer Nitro V 15</h1><p data-testid="price-value">R$ 5.183,80</p><div data-testid="mod-bestinstallment"><p>R$ 5.759,78</p></div></body></html>',
+                200
+            ),
+        ]);
+
+        $scraper = new MagaluScraper;
+        $data = $scraper->scrape('https://magazineluiza.com.br/notebook-gamer/p/bhe08d34k4/in/nota?seller_id=aceroficial', 7);
+
+        expect($data->title)->toBe('Notebook Gamer Acer Nitro V 15')
+            ->and($data->cashPrice)->toBe(5183.80)
+            ->and($data->installmentPrice)->toBe(5759.78)
+            ->and($data->inStock)->toBeTrue();
+    });
 });
