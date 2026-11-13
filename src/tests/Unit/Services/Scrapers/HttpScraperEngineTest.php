@@ -382,4 +382,21 @@ describe('HTTP Execution and Structured Logging (RNF-005 / RNF-008)', function (
             ->and($data->installmentPrice)->toBe(5759.78)
             ->and($data->inStock)->toBeTrue();
     });
+
+    it('retries Pichau with SSR crawler User-Agent when first request returns HTTP 403', function () {
+        Http::fakeSequence('https://pichau.com.br/*')
+            ->push('Cloudflare challenge', 403)
+            ->push(
+                '<!DOCTYPE html><html lang="pt-BR"><body><h1 data-cy="product-page-title">Notebook Gamer Acer Nitro V15</h1><div class="mui-1jk88bq-price_vista">R$ 7,499.99</div><div class="mui-7ie9un-price_total">R$ 8,823.52</div></body></html>',
+                200
+            );
+
+        $scraper = new PichauScraper;
+        $data = $scraper->scrape('https://pichau.com.br/notebook-gamer-acer-nitro-v15', 6);
+
+        expect($data->title)->toBe('Notebook Gamer Acer Nitro V15')
+            ->and($data->cashPrice)->toBe(7499.99)
+            ->and($data->installmentPrice)->toBe(8823.52)
+            ->and($data->inStock)->toBeTrue();
+    });
 });

@@ -2,11 +2,37 @@
 
 namespace App\Services\Scrapers;
 
+use Illuminate\Http\Client\Response;
+
 class PichauScraper extends AbstractHttpScraper
 {
+    private const SSR_USER_AGENTS = [
+        'WhatsApp/2.24.16.78 A',
+        'Twitterbot/1.0',
+        'TelegramBot (like TwitterBot)',
+    ];
+
     public function domain(): string
     {
         return 'pichau.com.br';
+    }
+
+    protected function fetchHtml(string $url): Response
+    {
+        $response = null;
+
+        foreach (self::SSR_USER_AGENTS as $userAgent) {
+            $headers = $this->requestHeaders();
+            $headers['User-Agent'] = $userAgent;
+
+            $response = $this->sendGetRequest($url, $headers);
+
+            if ($response->successful()) {
+                return $response;
+            }
+        }
+
+        return $response;
     }
 
     protected function titleSelectors(): array
